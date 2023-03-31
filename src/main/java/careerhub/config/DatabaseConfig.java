@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
 @EnableTransactionManagement
-@EnableJpaRepositories(basePackages = "com.example.demo.repository")
+@EnableJpaRepositories(basePackages = "careerhub.repository")
 public class DatabaseConfig {
 
     @Autowired
@@ -40,7 +40,7 @@ public class DatabaseConfig {
         LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
         factory.setDataSource(dataSource());
         factory.setJpaVendorAdapter(vendorAdapter);
-        factory.setPackagesToScan("com.example.demo.model");
+        factory.setPackagesToScan("careerhub.model");
         return factory;
     }
 
