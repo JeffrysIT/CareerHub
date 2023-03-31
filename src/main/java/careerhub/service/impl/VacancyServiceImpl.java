@@ -3,6 +3,7 @@ package careerhub.service.impl;
 import careerhub.model.Vacancy;
 import careerhub.repository.VacancyRepository;
 import careerhub.service.VacancyService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,6 +13,7 @@ public class VacancyServiceImpl implements VacancyService {
 
     private final VacancyRepository vacancyRepository;
 
+    @Autowired
     public VacancyServiceImpl(VacancyRepository vacancyRepository) {
         this.vacancyRepository = vacancyRepository;
     }

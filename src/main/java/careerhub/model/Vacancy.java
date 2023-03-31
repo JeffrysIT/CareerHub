@@ -1,18 +1,29 @@
 package careerhub.model;
 
+import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
 
+@Entity
+@Table(name = "vacancies")
 public class Vacancy {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private String title;
-    private String description;
-    private int companyId;
 
-    public Vacancy(int id, String title, String description, int companyId) {
-        this.id = id;
-        this.title = title;
-        this.description = description;
-        this.companyId = companyId;
+    @Column(name = "title", nullable = false)
+    private String title;
+
+    @Column(name = "description")
+    private String description;
+
+    @Column(name = "viewed")
+    private int viewed;
+
+    @ManyToMany(mappedBy = "appliedVacancies")
+    private List<UserDetails> applicants;
+
+    public Vacancy() {
     }
 
     @Override
@@ -20,12 +31,22 @@ public class Vacancy {
         if (this == o) return true;
         if (!(o instanceof Vacancy)) return false;
         Vacancy vacancy = (Vacancy) o;
-        return id == vacancy.id;
+        return getId() == vacancy.getId() && getTitle().equals(vacancy.getTitle()) && Objects.equals(getDescription(), vacancy.getDescription()) && Objects.equals(getApplicants(), vacancy.getApplicants());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, description, companyId);
+        return Objects.hash(getId(), getTitle(), getDescription(), getApplicants());
+    }
+
+    @Override
+    public String toString() {
+        return "Vacancy{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", applicants=" + applicants +
+                '}';
     }
 
     public int getId() {
@@ -52,11 +73,11 @@ public class Vacancy {
         this.description = description;
     }
 
-    public int getCompanyId() {
-        return companyId;
+    public List<UserDetails> getApplicants() {
+        return applicants;
     }
 
-    public void setCompanyId(int companyId) {
-        this.companyId = companyId;
+    public void setApplicants(List<UserDetails> applicants) {
+        this.applicants = applicants;
     }
 }
