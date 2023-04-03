@@ -44,7 +44,7 @@ public class VacancyServiceImpl implements VacancyService {
 
     @Override
     public Vacancy getVacancyById(Long id) {
-        return vacancyRepository.findById(id).orElseThrow(() -> new RuntimeException("Vacancy not found"));
+        return vacancyRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Vacancy not found"));
     }
 
     @Override

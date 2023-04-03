@@ -7,8 +7,6 @@ import careerhub.service.UserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
@@ -21,7 +19,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails getUserDetailsById(Long id) {
-        return userDetailsRepository.getById(id);
+        return userDetailsRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
     }
 
     @Override
@@ -48,4 +47,3 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         return userDetailsRepository.save(existingUser);
     }
 }
-
