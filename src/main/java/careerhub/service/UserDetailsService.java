@@ -12,8 +12,6 @@ public interface UserDetailsService {
 
     void deleteUserDetails(Long id);
 
-    List<UserDetails> getAllUserDetails();
-
     UserDetails updateUserDetails(UserDetails user);
 
 }

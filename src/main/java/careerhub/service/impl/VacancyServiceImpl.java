@@ -1,12 +1,13 @@
 package careerhub.service.impl;
 
+import careerhub.exception.ResourceNotFoundException;
 import careerhub.model.Vacancy;
 import careerhub.repository.VacancyRepository;
 import careerhub.service.VacancyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.Collection;
 
 @Service
 public class VacancyServiceImpl implements VacancyService {
@@ -24,7 +25,15 @@ public class VacancyServiceImpl implements VacancyService {
     }
 
     @Override
-    public Vacancy updateVacancy(Long id, Vacancy vacancy) {
+    public Vacancy updateVacancy(Vacancy vacancy) {
+        Long vacancyId = vacancy.getId();
+        Vacancy existingVacancy = vacancyRepository.findById(vacancyId)
+                .orElseThrow(() -> new ResourceNotFoundException("Vacancy not found with id: " + vacancyId));
+        existingVacancy.setTitle(vacancy.getTitle());
+        existingVacancy.setDescription(vacancy.getDescription());
+        existingVacancy.setViewed(vacancy.getViewed());
+        existingVacancy.setApplicants(vacancy.getApplicants());
+
         return vacancyRepository.save(vacancy);
     }
 
@@ -39,7 +48,7 @@ public class VacancyServiceImpl implements VacancyService {
     }
 
     @Override
-    public List<Vacancy> getAllVacancies() {
+    public Collection<Vacancy> getAllVacancies() {
         return vacancyRepository.findAll();
     }
 }

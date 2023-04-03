@@ -2,16 +2,16 @@ package careerhub.service;
 
 import careerhub.model.Vacancy;
 
-import java.util.List;
+import java.util.Collection;
 
 public interface VacancyService {
     Vacancy createVacancy(Vacancy vacancy);
 
-    Vacancy updateVacancy(Long id, Vacancy vacancy);
+    Vacancy updateVacancy(Vacancy vacancy);
 
     void deleteVacancy(Long id);
 
     Vacancy getVacancyById(Long id);
 
-    List<Vacancy> getAllVacancies();
+    Collection<Vacancy> getAllVacancies();
 }
