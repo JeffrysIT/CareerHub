@@ -35,11 +35,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     }
 
     @Override
-    public List<UserDetails> getAllUserDetails() {
-        return userDetailsRepository.findAll();
-    }
-
-    @Override
     public UserDetails updateUserDetails(UserDetails user) {
         Long userId = user.getId();
         UserDetails existingUser = userDetailsRepository.findById(userId)
