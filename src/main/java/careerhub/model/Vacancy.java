@@ -9,10 +9,13 @@ import java.util.Objects;
 public class Vacancy {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private long id;
 
     @Column(name = "title", nullable = false)
     private String title;
+
+    @Column(name = "job_position", nullable = false)
+    private String jobPosition;
 
     @Column(name = "description")
     private String description;
@@ -49,12 +52,20 @@ public class Vacancy {
                 '}';
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
+    }
+
+    public int getViewed() {
+        return viewed;
+    }
+
+    public void setViewed(int viewed) {
+        this.viewed = viewed;
     }
 
     public String getTitle() {

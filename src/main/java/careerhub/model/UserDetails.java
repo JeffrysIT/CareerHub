@@ -9,7 +9,7 @@ import java.util.Objects;
 public class UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private long id;
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -44,11 +44,11 @@ public class UserDetails {
         return Objects.hash(getId(), getName(), getEmail(), getResumeHtml(), getAppliedVacancies());
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 

@@ -11,15 +11,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/user-details")
-public class UserController {
+public class UserDetailsController {
 
     @Autowired
     private UserDetailsService userDetailsService;
-
-    @GetMapping
-    public List<UserDetails> getAllUsers() {
-        return userDetailsService.getAllUserDetails();
-    }
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDetails> getUserById(@PathVariable("id") Long id) {
@@ -33,9 +28,9 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<UserDetails> updateUser(@PathVariable("id") Long id, @RequestBody UserDetails user) {
-        UserDetails updatedUser = userDetailsService.updateUserDetails(id, user);
+    @PutMapping
+    public ResponseEntity<UserDetails> updateUser(@RequestBody UserDetails user) {
+        UserDetails updatedUser = userDetailsService.updateUserDetails(user);
         return ResponseEntity.ok(updatedUser);
     }
 

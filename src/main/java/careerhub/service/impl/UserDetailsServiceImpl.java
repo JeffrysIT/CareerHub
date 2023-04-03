@@ -2,7 +2,7 @@ package careerhub.service.impl;
 
 import careerhub.exception.ResourceNotFoundException;
 import careerhub.model.UserDetails;
-import careerhub.repository.UserRepository;
+import careerhub.repository.UserDetailsRepository;
 import careerhub.service.UserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,43 +12,45 @@ import java.util.List;
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    private final UserRepository userRepository;
+    private final UserDetailsRepository userDetailsRepository;
 
     @Autowired
-    public UserDetailsServiceImpl(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public UserDetailsServiceImpl(UserDetailsRepository userDetailsRepository) {
+        this.userDetailsRepository = userDetailsRepository;
     }
 
     @Override
     public UserDetails getUserDetailsById(Long id) {
-        return userRepository.getById(id);
+        return userDetailsRepository.getById(id);
     }
 
     @Override
     public UserDetails saveUserDetails(UserDetails user) {
-        return userRepository.save(user);
+        return userDetailsRepository.save(user);
     }
 
     @Override
     public void deleteUserDetails(Long id) {
-        userRepository.deleteById(id);
+        userDetailsRepository.deleteById(id);
     }
 
     @Override
     public List<UserDetails> getAllUserDetails() {
-        return userRepository.findAll();
+        return userDetailsRepository.findAll();
     }
 
     @Override
-    public UserDetails updateUserDetails(Long id, UserDetails user) {
-        UserDetails existingUser = userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+    public UserDetails updateUserDetails(UserDetails user) {
+        Long userId = user.getId();
+        UserDetails existingUser = userDetailsRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
 
         existingUser.setName(user.getName());
         existingUser.setEmail(user.getEmail());
         existingUser.setResumeHtml(user.getResumeHtml());
+        existingUser.setAppliedVacancies(user.getAppliedVacancies());
 
-        return userRepository.save(existingUser);
+        return userDetailsRepository.save(existingUser);
     }
 }
 
