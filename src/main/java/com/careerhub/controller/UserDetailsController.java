@@ -1,7 +1,8 @@
-package careerhub.controller;
+package com.careerhub.controller;
 
-import careerhub.model.UserDetails;
-import careerhub.service.UserDetailsService;
+
+import com.careerhub.model.UserDetails;
+import com.careerhub.service.UserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

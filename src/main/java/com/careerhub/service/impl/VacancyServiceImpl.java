@@ -1,13 +1,12 @@
-package careerhub.service.impl;
+package com.careerhub.service.impl;
 
-import careerhub.exception.ResourceNotFoundException;
-import careerhub.model.Vacancy;
-import careerhub.repository.VacancyRepository;
-import careerhub.service.VacancyService;
+import com.careerhub.exception.ResourceNotFoundException;
+import com.careerhub.model.Vacancy;
+import com.careerhub.repository.VacancyRepository;
+import com.careerhub.service.VacancyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
 
 @Service
 public class VacancyServiceImpl implements VacancyService {
@@ -45,10 +44,5 @@ public class VacancyServiceImpl implements VacancyService {
     @Override
     public Vacancy getVacancyById(Long id) {
         return vacancyRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Vacancy not found"));
-    }
-
-    @Override
-    public Collection<Vacancy> getAllVacancies() {
-        return vacancyRepository.findAll();
     }
 }

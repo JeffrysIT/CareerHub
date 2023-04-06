@@ -1,9 +1,9 @@
-package careerhub.service.impl;
+package com.careerhub.service.impl;
 
-import careerhub.exception.ResourceNotFoundException;
-import careerhub.model.UserDetails;
-import careerhub.repository.UserDetailsRepository;
-import careerhub.service.UserDetailsService;
+import com.careerhub.exception.ResourceNotFoundException;
+import com.careerhub.model.UserDetails;
+import com.careerhub.repository.UserDetailsRepository;
+import com.careerhub.service.UserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

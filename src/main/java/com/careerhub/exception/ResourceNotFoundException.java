@@ -1,4 +1,5 @@
-package careerhub.exception;
+package com.careerhub.exception;
+
 
 public class ResourceNotFoundException extends RuntimeException {
 

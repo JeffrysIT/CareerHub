@@ -1,8 +1,6 @@
-package careerhub.service;
+package com.careerhub.service;
 
-import careerhub.model.UserDetails;
-
-import java.util.List;
+import com.careerhub.model.UserDetails;
 
 public interface UserDetailsService {
 
