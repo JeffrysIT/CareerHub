@@ -23,6 +23,12 @@ public class Vacancy {
     @Column(name = "description")
     private String description;
 
+    @Column(name = "salary")
+    private String salary;
+
+    @Column(name = "location")
+    private String location;
+
     @Column(name = "viewed")
     private int viewed;
 
@@ -45,31 +51,49 @@ public class Vacancy {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Vacancy vacancy = (Vacancy) o;
-        return id == vacancy.id && viewed == vacancy.viewed && title.equals(vacancy.title) && Objects.equals(jobPosition, vacancy.jobPosition) && Objects.equals(description, vacancy.description) && created.equals(vacancy.created) && Objects.equals(deleted, vacancy.deleted) && Objects.equals(updated, vacancy.updated) && Objects.equals(applicants, vacancy.applicants);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, title, jobPosition, description, viewed, created, deleted, updated, applicants);
-    }
-
-    @Override
     public String toString() {
         return "Vacancy{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", jobPosition='" + jobPosition + '\'' +
                 ", description='" + description + '\'' +
+                ", salary='" + salary + '\'' +
+                ", location='" + location + '\'' +
                 ", viewed=" + viewed +
                 ", created=" + created +
                 ", deleted=" + deleted +
                 ", updated=" + updated +
-                ", applicants=" + applicants +
+                ", applicants=" + applicants.toString() +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Vacancy vacancy = (Vacancy) o;
+        return id == vacancy.id && viewed == vacancy.viewed && title.equals(vacancy.title) && jobPosition.equals(vacancy.jobPosition) && Objects.equals(description, vacancy.description) && Objects.equals(salary, vacancy.salary) && Objects.equals(location, vacancy.location) && created.equals(vacancy.created) && Objects.equals(deleted, vacancy.deleted) && Objects.equals(updated, vacancy.updated) && Objects.equals(applicants, vacancy.applicants);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, title, jobPosition, description, salary, location, viewed, created, deleted, updated, applicants);
+    }
+
+    public String getSalary() {
+        return salary;
+    }
+
+    public void setSalary(String salary) {
+        this.salary = salary;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     public long getId() {

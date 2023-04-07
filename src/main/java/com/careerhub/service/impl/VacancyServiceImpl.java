@@ -38,11 +38,15 @@ public class VacancyServiceImpl implements VacancyService {
         if (existingVacancy.getDeleted() != null) {
             throw new ResourceNotFoundException("Vacancy not found by id: " + vacancyId);
         }
+
         existingVacancy.setTitle(vacancy.getTitle());
         existingVacancy.setDescription(vacancy.getDescription());
         existingVacancy.setViewed(vacancy.getViewed());
         existingVacancy.setApplicants(vacancy.getApplicants());
+        existingVacancy.setSalary(vacancy.getSalary());
+        existingVacancy.setLocation(vacancy.getLocation());
         existingVacancy.setUpdated(LocalDateTime.now());
+
         return vacancyRepository.save(vacancy);
     }
 
