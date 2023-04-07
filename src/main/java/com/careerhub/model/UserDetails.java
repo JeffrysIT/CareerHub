@@ -36,14 +36,14 @@ public class UserDetails {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof UserDetails)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
         UserDetails that = (UserDetails) o;
-        return getId() == that.getId() && getName().equals(that.getName()) && getEmail().equals(that.getEmail()) && Objects.equals(getResumeHtml(), that.getResumeHtml()) && Objects.equals(getAppliedVacancies(), that.getAppliedVacancies());
+        return id == that.id && Objects.equals(name, that.name) && email.equals(that.email) && Objects.equals(resumeHtml, that.resumeHtml) && Objects.equals(appliedVacancies, that.appliedVacancies);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getName(), getEmail(), getResumeHtml(), getAppliedVacancies());
+        return Objects.hash(id, name, email, resumeHtml, appliedVacancies);
     }
 
     public long getId() {
