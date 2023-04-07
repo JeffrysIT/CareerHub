@@ -1,7 +1,6 @@
 package com.careerhub.handler;
 
 
-import com.careerhub.exception.ResourceAlreadyDeletedException;
 import com.careerhub.exception.ResourceAlreadyExistException;
 import com.careerhub.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -16,12 +15,6 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleResourceNotFoundException(ResourceNotFoundException e) {
         ErrorResponse errorResponse = new ErrorResponse(HttpStatus.NOT_FOUND.value(), e.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
-    }
-
-    @ExceptionHandler(ResourceAlreadyDeletedException.class)
-    public ResponseEntity<ErrorResponse> handleResourceAlreadyDeletedException(ResourceAlreadyDeletedException e) {
-        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.CONFLICT.value(), e.getMessage());
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
     }
 
     @ExceptionHandler(ResourceAlreadyExistException.class)

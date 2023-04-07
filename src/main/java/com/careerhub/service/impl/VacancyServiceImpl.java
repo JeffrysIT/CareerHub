@@ -1,6 +1,5 @@
 package com.careerhub.service.impl;
 
-import com.careerhub.exception.ResourceAlreadyDeletedException;
 import com.careerhub.exception.ResourceAlreadyExistException;
 import com.careerhub.exception.ResourceNotFoundException;
 import com.careerhub.model.Vacancy;
@@ -36,6 +35,9 @@ public class VacancyServiceImpl implements VacancyService {
         Vacancy existingVacancy = vacancyRepository.findById(vacancyId)
                 .orElseThrow(()
                         -> new ResourceNotFoundException("Vacancy not found with id: " + vacancyId));
+        if (existingVacancy.getDeleted() != null) {
+            throw new ResourceNotFoundException("Vacancy not found by id: " + vacancyId);
+        }
         existingVacancy.setTitle(vacancy.getTitle());
         existingVacancy.setDescription(vacancy.getDescription());
         existingVacancy.setViewed(vacancy.getViewed());
@@ -47,17 +49,21 @@ public class VacancyServiceImpl implements VacancyService {
     @Override
     public void deleteVacancy(Long id) {
         Vacancy existingVacancy = vacancyRepository.findById(id).orElseThrow(()
-                -> new ResourceNotFoundException("Vacancy not found with id: " + id));
+                -> new ResourceNotFoundException("Vacancy not found by id: " + id));
         if (existingVacancy.getDeleted() != null) {
-            existingVacancy.setDeleted(LocalDateTime.now());
+            throw new ResourceNotFoundException("Vacancy not found by id: " + id);
         } else {
-            throw new ResourceAlreadyDeletedException("Vacancy with id: " + id + " already deleted");
+            existingVacancy.setDeleted(LocalDateTime.now());
         }
     }
 
     @Override
     public Vacancy getVacancyById(Long id) {
-        return vacancyRepository.findById(id).orElseThrow(()
+        Vacancy vacancy = vacancyRepository.findById(id).orElseThrow(()
                 -> new ResourceNotFoundException("Vacancy not found by provided id: " + id));
+        if (vacancy.getDeleted() != null) {
+            throw new ResourceNotFoundException("Vacancy not found by provided id: " + id);
+        }
+        return vacancy;
     }
 }
