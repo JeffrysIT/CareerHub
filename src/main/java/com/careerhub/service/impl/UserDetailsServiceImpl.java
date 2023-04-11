@@ -1,5 +1,7 @@
 package com.careerhub.service.impl;
 
+import com.careerhub.dto.UserDetailsRequestDTO;
+import com.careerhub.dto.mapper.MapStructMapper;
 import com.careerhub.exception.ResourceNotFoundException;
 import com.careerhub.model.UserDetails;
 import com.careerhub.repository.UserDetailsRepository;
@@ -11,21 +13,24 @@ import org.springframework.stereotype.Service;
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     private final UserDetailsRepository userDetailsRepository;
+    private final MapStructMapper mapper;
 
     @Autowired
-    public UserDetailsServiceImpl(UserDetailsRepository userDetailsRepository) {
+    public UserDetailsServiceImpl(UserDetailsRepository userDetailsRepository, MapStructMapper mapper) {
         this.userDetailsRepository = userDetailsRepository;
+        this.mapper = mapper;
     }
 
     @Override
     public UserDetails getUserDetailsById(Long id) {
         return userDetailsRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("UserDetails not found with id: " + id));
     }
 
     @Override
-    public UserDetails saveUserDetails(UserDetails user) {
-        return userDetailsRepository.save(user);
+    public UserDetails saveUserDetails(UserDetailsRequestDTO userDetailsRequestDTO) {
+        UserDetails userDetails = mapper.userDetailsRequestDTOtoUserDetails(userDetailsRequestDTO);
+        return userDetailsRepository.save(userDetails);
     }
 
     @Override
@@ -34,15 +39,15 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     }
 
     @Override
-    public UserDetails updateUserDetails(UserDetails user) {
-        Long userId = user.getId();
-        UserDetails existingUser = userDetailsRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
+    public UserDetails updateUserDetails(Long id, UserDetailsRequestDTO userDetailsRequestDTO) {
+        UserDetails userDetails = mapper.userDetailsRequestDTOtoUserDetails(userDetailsRequestDTO);
+        UserDetails existingUser = userDetailsRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("UserDetails not found with id: " + id));
 
-        existingUser.setName(user.getName());
-        existingUser.setEmail(user.getEmail());
-        existingUser.setResumeHtml(user.getResumeHtml());
-        existingUser.setAppliedVacancies(user.getAppliedVacancies());
+        existingUser.setName(userDetails.getName());
+        existingUser.setEmail(userDetails.getEmail());
+        existingUser.setResumeHtml(userDetails.getResumeHtml());
+        existingUser.setAppliedVacancies(userDetails.getAppliedVacancies());
 
         return userDetailsRepository.save(existingUser);
     }

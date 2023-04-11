@@ -1,6 +1,6 @@
 package com.careerhub.controller;
 
-
+import com.careerhub.dto.VacancyRequestDTO;
 import com.careerhub.model.Vacancy;
 import com.careerhub.service.VacancyService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,15 +22,15 @@ public class VacancyController {
     }
 
     @PostMapping
-    public ResponseEntity<Vacancy> createVacancy(@RequestBody Vacancy vacancy) {
-        Vacancy createdVacancy = vacancyService.createVacancy(vacancy);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdVacancy);
+    public ResponseEntity<Vacancy> createVacancy(@RequestBody VacancyRequestDTO vacancyRequestDTO) {
+        Vacancy vacancy = vacancyService.createVacancy(vacancyRequestDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(vacancy);
     }
 
-    @PutMapping
-    public ResponseEntity<Vacancy> updateVacancy(@RequestBody Vacancy vacancy) {
-        Vacancy updatedVacancy = vacancyService.updateVacancy(vacancy);
-        return ResponseEntity.ok(updatedVacancy);
+    @PutMapping("/{id}")
+    public ResponseEntity<Vacancy> updateVacancy(@PathVariable("id") Long id, @RequestBody VacancyRequestDTO vacancyRequestDTO) {
+        Vacancy vacancy = vacancyService.updateVacancy(id, vacancyRequestDTO);
+        return ResponseEntity.ok(vacancy);
     }
 
     @DeleteMapping("/{id}")

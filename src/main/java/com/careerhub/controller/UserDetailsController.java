@@ -1,6 +1,6 @@
 package com.careerhub.controller;
 
-
+import com.careerhub.dto.UserDetailsRequestDTO;
 import com.careerhub.model.UserDetails;
 import com.careerhub.service.UserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,14 +22,14 @@ public class UserDetailsController {
     }
 
     @PostMapping
-    public ResponseEntity<UserDetails> createUser(@RequestBody UserDetails user) {
-        UserDetails createdUser = userDetailsService.saveUserDetails(user);
+    public ResponseEntity<UserDetails> createUser(@RequestBody UserDetailsRequestDTO userDTO) {
+        UserDetails createdUser = userDetailsService.saveUserDetails(userDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
 
-    @PutMapping
-    public ResponseEntity<UserDetails> updateUser(@RequestBody UserDetails user) {
-        UserDetails updatedUser = userDetailsService.updateUserDetails(user);
+    @PutMapping("/{id}")
+    public ResponseEntity<UserDetails> updateUser(@PathVariable("id") Long id, @RequestBody UserDetailsRequestDTO userDTO) {
+        UserDetails updatedUser = userDetailsService.updateUserDetails(id, userDTO);
         return ResponseEntity.ok(updatedUser);
     }
 
@@ -38,6 +38,4 @@ public class UserDetailsController {
         userDetailsService.deleteUserDetails(id);
         return ResponseEntity.noContent().build();
     }
-
 }
-
