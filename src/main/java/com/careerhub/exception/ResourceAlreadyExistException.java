@@ -1,5 +1,6 @@
 package com.careerhub.exception;
 
+
 public class ResourceAlreadyExistException extends RuntimeException {
 
     public ResourceAlreadyExistException(String message) {

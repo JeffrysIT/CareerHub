@@ -1,5 +1,7 @@
 package com.careerhub.service.impl;
 
+import com.careerhub.dto.VacancyRequestDTO;
+import com.careerhub.dto.mapper.MapStructMapper;
 import com.careerhub.exception.ResourceAlreadyExistException;
 import com.careerhub.exception.ResourceNotFoundException;
 import com.careerhub.model.Vacancy;
@@ -16,13 +18,17 @@ public class VacancyServiceImpl implements VacancyService {
 
     private final VacancyRepository vacancyRepository;
 
+    private final MapStructMapper mapper;
+
     @Autowired
-    public VacancyServiceImpl(VacancyRepository vacancyRepository) {
+    public VacancyServiceImpl(VacancyRepository vacancyRepository, MapStructMapper mapper) {
         this.vacancyRepository = vacancyRepository;
+        this.mapper = mapper;
     }
 
     @Override
-    public Vacancy createVacancy(Vacancy vacancy) {
+    public Vacancy createVacancy(VacancyRequestDTO vacancyDto) {
+        Vacancy vacancy = mapper.vacancyRequestDTOtoVacancy(vacancyDto);
         if (vacancyRepository.existsById(vacancy.getId())) {
             throw new ResourceAlreadyExistException("Vacancy with id: " + vacancy.getId() + " already exist");
         }
@@ -30,15 +36,14 @@ public class VacancyServiceImpl implements VacancyService {
     }
 
     @Override
-    public Vacancy updateVacancy(Vacancy vacancy) {
-        Long vacancyId = vacancy.getId();
-        Vacancy existingVacancy = vacancyRepository.findById(vacancyId)
+    public Vacancy updateVacancy(Long id, VacancyRequestDTO vacancyRequestDTO) {
+        Vacancy vacancy = mapper.vacancyRequestDTOtoVacancy(vacancyRequestDTO);
+        Vacancy existingVacancy = vacancyRepository.findById(id)
                 .orElseThrow(()
-                        -> new ResourceNotFoundException("Vacancy not found with id: " + vacancyId));
+                        -> new ResourceNotFoundException("Vacancy not found with id: " + id));
         if (existingVacancy.getDeleted() != null) {
-            throw new ResourceNotFoundException("Vacancy not found by id: " + vacancyId);
+            throw new ResourceNotFoundException("Vacancy not found by id: " + id);
         }
-
         existingVacancy.setTitle(vacancy.getTitle());
         existingVacancy.setDescription(vacancy.getDescription());
         existingVacancy.setViewed(vacancy.getViewed());
