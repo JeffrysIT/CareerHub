@@ -1,4 +1,4 @@
-package com.careerhub.handler;
+package com.careerhub.exception.handler;
 
 
 import com.careerhub.exception.ResourceAlreadyExistException;

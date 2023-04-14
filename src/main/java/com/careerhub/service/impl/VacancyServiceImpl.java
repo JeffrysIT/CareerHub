@@ -4,10 +4,15 @@ import com.careerhub.dto.VacancyRequestDTO;
 import com.careerhub.dto.mapper.MapStructMapper;
 import com.careerhub.exception.ResourceAlreadyExistException;
 import com.careerhub.exception.ResourceNotFoundException;
+import com.careerhub.model.UserDetails;
 import com.careerhub.model.Vacancy;
 import com.careerhub.repository.VacancyRepository;
+import com.careerhub.service.UserDetailsService;
 import com.careerhub.service.VacancyService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -17,12 +22,14 @@ import java.time.LocalDateTime;
 public class VacancyServiceImpl implements VacancyService {
 
     private final VacancyRepository vacancyRepository;
+    private final UserDetailsService userDetailsService;
 
     private final MapStructMapper mapper;
 
     @Autowired
-    public VacancyServiceImpl(VacancyRepository vacancyRepository, MapStructMapper mapper) {
+    public VacancyServiceImpl(VacancyRepository vacancyRepository, UserDetailsService userDetailsService, MapStructMapper mapper) {
         this.vacancyRepository = vacancyRepository;
+        this.userDetailsService = userDetailsService;
         this.mapper = mapper;
     }
 
@@ -32,6 +39,7 @@ public class VacancyServiceImpl implements VacancyService {
         if (vacancyRepository.existsById(vacancy.getId())) {
             throw new ResourceAlreadyExistException("Vacancy with id: " + vacancy.getId() + " already exist");
         }
+        vacancy.setCreated(LocalDateTime.now());
         return vacancyRepository.save(vacancy);
     }
 
@@ -75,4 +83,29 @@ public class VacancyServiceImpl implements VacancyService {
         }
         return vacancy;
     }
+
+    @Override
+    public Vacancy addUserToVacancy(Long vacancyId, Long userId) {
+        Vacancy vacancy = getVacancyById(vacancyId);
+        UserDetails user = userDetailsService.getUserDetailsById(userId);
+        vacancy.getApplicants().add(user);
+        return vacancyRepository.save(vacancy);
+    }
+
+    @Override
+    public Page<Vacancy> getVacancies(String sortBy, String direction, int page, int size) {
+        Sort.Direction sortDirection = direction.equalsIgnoreCase("ASC") ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Sort sort = Sort.by(sortDirection, sortBy);
+        PageRequest pageRequest = PageRequest.of(page, size, sort);
+        return vacancyRepository.findAll(pageRequest);
+    }
+
+    @Override
+    public Page<Vacancy> searchVacancies(String query, String sortBy, String direction, int page, int size) {
+        Sort.Direction sortDirection = direction.equalsIgnoreCase("ASC") ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Sort sort = Sort.by(sortDirection, sortBy);
+        PageRequest pageRequest = PageRequest.of(page, size, sort);
+        return vacancyRepository.findByTitleContainingOrJobPositionContaining(query, query, pageRequest);
+    }
+
 }

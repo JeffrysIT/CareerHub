@@ -2,6 +2,8 @@ package com.careerhub.service;
 
 import com.careerhub.dto.VacancyRequestDTO;
 import com.careerhub.model.Vacancy;
+import org.springframework.data.domain.Page;
+
 
 public interface VacancyService {
     Vacancy createVacancy(VacancyRequestDTO vacancy);
@@ -11,4 +13,10 @@ public interface VacancyService {
     void deleteVacancy(Long id);
 
     Vacancy getVacancyById(Long id);
+
+    Vacancy addUserToVacancy(Long vacancyId, Long userId);
+
+    Page<Vacancy> getVacancies(String sortBy, String direction, int page, int size);
+
+    Page<Vacancy> searchVacancies(String query, String sortBy, String direction, int page, int size);
 }

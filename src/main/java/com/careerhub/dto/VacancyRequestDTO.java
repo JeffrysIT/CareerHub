@@ -3,11 +3,9 @@ package com.careerhub.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class VacancyRequestDTO {
-    @JsonProperty("id")
-    private Long id;
-    @JsonProperty("title")
+    @JsonProperty(value = "title", required = true)
     private String title;
-    @JsonProperty("jobPosition")
+    @JsonProperty(value = "jobPosition")
     private String jobPosition;
     @JsonProperty("description")
     private String description;
