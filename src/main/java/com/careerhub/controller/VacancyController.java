@@ -28,7 +28,7 @@ public class VacancyController {
 
     @GetMapping
     public ResponseEntity<Page<Vacancy>> getVacancies(
-            @RequestParam(name = "sortBy", defaultValue = "created") String sortBy,
+            @RequestParam(name = "sort", defaultValue = "created") String sortBy,
             @RequestParam(name = "direction", defaultValue = "DESC") String direction,
             @RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "10") int size
@@ -40,12 +40,12 @@ public class VacancyController {
     @GetMapping("/search")
     public ResponseEntity<Page<Vacancy>> searchVacancies(
             @RequestParam(name = "query") String query,
-            @RequestParam(name = "sortBy", defaultValue = "created") String sortBy,
-            @RequestParam(name = "sortDirection", defaultValue = "DESC") String direction,
+            @RequestParam(name = "sort", defaultValue = "created") String sort,
+            @RequestParam(name = "order", defaultValue = "DESC") String order,
             @RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "10") int size
     ) {
-        Page<Vacancy> vacancyPage = vacancyService.searchVacancies(query, sortBy, direction, page, size);
+        Page<Vacancy> vacancyPage = vacancyService.searchVacancies(query, sort, order, page, size);
         return ResponseEntity.ok(vacancyPage);
     }
 }

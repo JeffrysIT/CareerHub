@@ -93,19 +93,21 @@ public class VacancyServiceImpl implements VacancyService {
     }
 
     @Override
-    public Page<Vacancy> getVacancies(String sortBy, String direction, int page, int size) {
-        Sort.Direction sortDirection = direction.equalsIgnoreCase("ASC") ? Sort.Direction.ASC : Sort.Direction.DESC;
-        Sort sort = Sort.by(sortDirection, sortBy);
-        PageRequest pageRequest = PageRequest.of(page, size, sort);
+    public Page<Vacancy> getVacancies(String sort, String order, int page, int size) {
+        PageRequest pageRequest = createPageRequestBy(sort, order, page, size);
         return vacancyRepository.findAll(pageRequest);
     }
 
     @Override
-    public Page<Vacancy> searchVacancies(String query, String sortBy, String direction, int page, int size) {
-        Sort.Direction sortDirection = direction.equalsIgnoreCase("ASC") ? Sort.Direction.ASC : Sort.Direction.DESC;
-        Sort sort = Sort.by(sortDirection, sortBy);
-        PageRequest pageRequest = PageRequest.of(page, size, sort);
-        return vacancyRepository.findByTitleContainingOrJobPositionContaining(query, query, pageRequest);
+    public Page<Vacancy> searchVacancies(String query, String sort, String order, int page, int size) {
+        PageRequest pageRequest = createPageRequestBy(sort, order, page, size);
+        return vacancyRepository.searchByTitleContainingIgnoreCase(query, pageRequest);
+    }
+
+    private PageRequest createPageRequestBy(String sortBy, String order, int page, int size) {
+        Sort.Direction orderBy = order.equalsIgnoreCase("ASC") ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Sort sort = Sort.by(orderBy, sortBy);
+        return PageRequest.of(page, size, sort);
     }
 
 }

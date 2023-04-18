@@ -16,7 +16,7 @@ public interface VacancyService {
 
     Vacancy addUserToVacancy(Long vacancyId, Long userId);
 
-    Page<Vacancy> getVacancies(String sortBy, String direction, int page, int size);
+    Page<Vacancy> getVacancies(String sortBy, String order, int page, int size);
 
-    Page<Vacancy> searchVacancies(String query, String sortBy, String direction, int page, int size);
+    Page<Vacancy> searchVacancies(String query, String sortBy, String order, int page, int size);
 }
