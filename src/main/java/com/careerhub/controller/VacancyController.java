@@ -21,11 +21,11 @@ public class VacancyController {
     }
 
     @PutMapping("/{vacancyId}/apply/{userId}")
-    public ResponseEntity<VacancyResponseDTO> applyUserToVacancy(
+    public ResponseEntity<VacancyResponseDTO> applyApplicationToVacancy(
             @PathVariable("vacancyId") Long vacancyId,
-            @PathVariable("userId") Long userId
+            @PathVariable("applicationId") Long applicationId
     ) {
-        VacancyResponseDTO vacancy = vacancyService.addUserToVacancy(vacancyId, userId);
+        VacancyResponseDTO vacancy = vacancyService.addApplicationToVacancy(vacancyId, applicationId);
         return ResponseEntity.ok(vacancy);
     }
 
@@ -51,4 +51,5 @@ public class VacancyController {
         Page<VacancyResponseDTO> vacancyPage = vacancyService.searchVacancies(query, sort, order, page, size);
         return ResponseEntity.ok(vacancyPage);
     }
+
 }

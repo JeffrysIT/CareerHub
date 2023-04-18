@@ -44,11 +44,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         UserDetails existingUser = userDetailsRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("UserDetails not found with id: " + id));
 
-        existingUser.setName(userDetails.getName());
-        existingUser.setEmail(userDetails.getEmail());
-        existingUser.setResumeHtml(userDetails.getResumeHtml());
-        existingUser.setAppliedVacancies(userDetails.getAppliedVacancies());
-
         return userDetailsRepository.save(existingUser);
     }
 }

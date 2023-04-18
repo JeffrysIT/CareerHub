@@ -36,13 +36,4 @@ public class VacancyAdminController {
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/{vacancyId}/delete/{userId}")
-    public ResponseEntity<VacancyResponseDTO> deleteUserFromVacancy(
-            @PathVariable("vacancyId") Long vacancyId,
-            @PathVariable("userId") Long userId
-    ) {
-        VacancyResponseDTO vacancy = vacancyService.addUserToVacancy(vacancyId, userId);
-        return ResponseEntity.ok(vacancy);
-    }
-
 }

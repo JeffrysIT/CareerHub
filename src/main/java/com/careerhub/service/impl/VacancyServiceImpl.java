@@ -5,10 +5,10 @@ import com.careerhub.dto.VacancyResponseDTO;
 import com.careerhub.dto.mapper.MapStructMapper;
 import com.careerhub.exception.ResourceAlreadyExistException;
 import com.careerhub.exception.ResourceNotFoundException;
-import com.careerhub.model.UserDetails;
+import com.careerhub.model.Application;
 import com.careerhub.model.Vacancy;
+import com.careerhub.repository.ApplicationRepository;
 import com.careerhub.repository.VacancyRepository;
-import com.careerhub.service.UserDetailsService;
 import com.careerhub.service.VacancyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -24,22 +24,22 @@ import java.util.List;
 public class VacancyServiceImpl implements VacancyService {
 
     private final VacancyRepository vacancyRepository;
-    private final UserDetailsService userDetailsService;
+    private final ApplicationRepository applicationRepository;
 
     private final MapStructMapper mapper;
 
-    private final List<String> SORT_FIELDS = List.of("created", "updated", "title", "salary", "location", "viewed", "applied");
+    private final List<String> SORT_FIELDS =
+            List.of("created", "updated", "title", "location", "viewed", "applied");
     private final int MAX_QUERY_LEN = 1000;
 
 
     @Autowired
     public VacancyServiceImpl(
             VacancyRepository vacancyRepository,
-            UserDetailsService userDetailsService,
-            MapStructMapper mapper
+            ApplicationRepository applicationRepository, MapStructMapper mapper
     ) {
         this.vacancyRepository = vacancyRepository;
-        this.userDetailsService = userDetailsService;
+        this.applicationRepository = applicationRepository;
         this.mapper = mapper;
     }
 
@@ -56,18 +56,20 @@ public class VacancyServiceImpl implements VacancyService {
 
     @Override
     public VacancyResponseDTO updateVacancy(Long id, VacancyRequestDTO vacancyRequestDTO) {
-        Vacancy vacancy = mapper.vacancyRequestDTOtoVacancy(vacancyRequestDTO);
-        Vacancy existingVacancy = vacancyRepository.findById(id)
-                .orElseThrow(()
-                        -> new ResourceNotFoundException("Vacancy not found with id: " + id));
-        if (existingVacancy.getDeleted() != null) {
-            throw new ResourceNotFoundException("Vacancy not found by id: " + id);
+
+        Vacancy existingVacancy = vacancyRepository.findByIdAndDeletedIsNull(id);
+        if (existingVacancy == null || existingVacancy.getDeleted() != null) {
+            throw new ResourceNotFoundException("Vacancy not found by provided id: " + id);
         }
 
+        if (existingVacancy.getId() != id) {
+            throw new IllegalArgumentException("param id can't be changed via request");
+        }
+
+        Vacancy vacancy = mapper.vacancyRequestDTOtoVacancy(vacancyRequestDTO);
+        existingVacancy.setId(vacancy.getId());
         existingVacancy.setTitle(vacancy.getTitle());
         existingVacancy.setDescription(vacancy.getDescription());
-        existingVacancy.setViewed(vacancy.getViewed());
-        existingVacancy.setApplicants(vacancy.getApplicants());
         existingVacancy.setSalary(vacancy.getSalary());
         existingVacancy.setLocation(vacancy.getLocation());
         existingVacancy.setUpdated(LocalDateTime.now());
@@ -90,28 +92,26 @@ public class VacancyServiceImpl implements VacancyService {
 
     @Override
     public VacancyResponseDTO getVacancyById(Long id) {
-        Vacancy vacancy = vacancyRepository.findByIdAndDeletedIsNull(id);
-        if (vacancy == null || vacancy.getDeleted() != null) {
+        Vacancy existingVacancy = vacancyRepository.findByIdAndDeletedIsNull(id);
+        if (existingVacancy == null || existingVacancy.getDeleted() != null) {
             throw new ResourceNotFoundException("Vacancy not found by provided id: " + id);
         }
-        increaseView(vacancy);
-        return mapper.vacancyToVacancyResponseDTO(vacancy);
+        increaseView(existingVacancy);
+        return mapper.vacancyToVacancyResponseDTO(existingVacancy);
     }
 
     @Override
-    public VacancyResponseDTO addUserToVacancy(Long vacancyId, Long userId) {
+    public VacancyResponseDTO addApplicationToVacancy(Long vacancyId, Long applicationId) {
         Vacancy vacancy = vacancyRepository.findByIdAndDeletedIsNull(vacancyId);
-        UserDetails user = userDetailsService.getUserDetailsById(userId);
+        Application application = applicationRepository.findById(applicationId).orElse(null);
         if (vacancy == null || vacancy.getDeleted() != null) {
             throw new ResourceNotFoundException("Vacancy not found by provided id: " + vacancyId);
         }
-        if (user == null) {
-            throw new ResourceNotFoundException("User Details not found by provided id: " + userId);
+        if (application == null) {
+            throw new ResourceNotFoundException("Application not found by provided id: " + applicationId);
         }
 
-        vacancy.getApplicants().add(user);
         Vacancy vacancyResponse = vacancyRepository.save(vacancy);
-
         return mapper.vacancyToVacancyResponseDTO(vacancyResponse);
     }
 
@@ -161,7 +161,7 @@ public class VacancyServiceImpl implements VacancyService {
     }
 
     private void refreshApplied(Vacancy vacancy) {
-        int applied = vacancy.getApplicants().size();
+        int applied = vacancy.getApplications().size();
         vacancy.setApplied(applied);
     }
 

@@ -14,7 +14,7 @@ public interface VacancyService {
 
     VacancyResponseDTO getVacancyById(Long id);
 
-    VacancyResponseDTO addUserToVacancy(Long vacancyId, Long userId);
+    VacancyResponseDTO addApplicationToVacancy(Long vacancyId, Long applicationId);
 
     Page<VacancyResponseDTO> getVacancies(String sortBy, String order, int page, int size);
 

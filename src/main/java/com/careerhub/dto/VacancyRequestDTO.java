@@ -3,16 +3,28 @@ package com.careerhub.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class VacancyRequestDTO {
-    @JsonProperty(value = "title", required = true)
+    @JsonProperty("id")
+    private long id;
+
+    @JsonProperty("title")
     private String title;
-    @JsonProperty(value = "jobPosition")
-    private String jobPosition;
+
     @JsonProperty("description")
     private String description;
+
     @JsonProperty("salary")
     private String salary;
+
     @JsonProperty("location")
     private String location;
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 
     public String getTitle() {
         return title;
@@ -20,14 +32,6 @@ public class VacancyRequestDTO {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public String getJobPosition() {
-        return jobPosition;
-    }
-
-    public void setJobPosition(String jobPosition) {
-        this.jobPosition = jobPosition;
     }
 
     public String getDescription() {

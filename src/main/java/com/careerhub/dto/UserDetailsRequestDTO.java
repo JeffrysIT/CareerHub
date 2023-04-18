@@ -1,40 +1,47 @@
 package com.careerhub.dto;
 
-import com.careerhub.model.Vacancy;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.List;
 
 public class UserDetailsRequestDTO {
 
-    @JsonProperty("name")
-    private String name;
+    @JsonProperty("id")
+    private long id;
+
+    @JsonProperty("first_name")
+    private String firstName;
+
+    @JsonProperty("last_name")
+    private String lastName;
 
     @JsonProperty("email")
     private String email;
 
-    @JsonProperty("resumeHtml")
-    private String resumeHtml;
+    @JsonProperty("phone_number")
+    private String phoneNumber;
 
-    @JsonProperty("appliedVacancies")
-    private List<Vacancy> appliedVacancies;
-
-    public UserDetailsRequestDTO() {
+    public long getId() {
+        return id;
     }
 
-    public UserDetailsRequestDTO(String name, String email, String resumeHtml, List<Vacancy> appliedVacancies) {
-        this.name = name;
-        this.email = email;
-        this.resumeHtml = resumeHtml;
-        this.appliedVacancies = appliedVacancies;
+    public void setId(long id) {
+        this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public String getEmail() {
@@ -45,19 +52,11 @@ public class UserDetailsRequestDTO {
         this.email = email;
     }
 
-    public String getResumeHtml() {
-        return resumeHtml;
+    public String getPhoneNumber() {
+        return phoneNumber;
     }
 
-    public void setResumeHtml(String resumeHtml) {
-        this.resumeHtml = resumeHtml;
-    }
-
-    public List<Vacancy> getAppliedVacancies() {
-        return appliedVacancies;
-    }
-
-    public void setAppliedVacancies(List<Vacancy> appliedVacancies) {
-        this.appliedVacancies = appliedVacancies;
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 }
