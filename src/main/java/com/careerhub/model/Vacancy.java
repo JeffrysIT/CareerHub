@@ -17,9 +17,6 @@ public class Vacancy {
     @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "job_position", nullable = false)
-    private String jobPosition;
-
     @Column(name = "description")
     private String description;
 
@@ -31,6 +28,9 @@ public class Vacancy {
 
     @Column(name = "viewed")
     private int viewed;
+
+    @Column(name = "applied")
+    private int applied;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created", nullable = false)
@@ -55,11 +55,11 @@ public class Vacancy {
         return "Vacancy{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
-                ", jobPosition='" + jobPosition + '\'' +
                 ", description='" + description + '\'' +
                 ", salary='" + salary + '\'' +
                 ", location='" + location + '\'' +
                 ", viewed=" + viewed +
+                ", applied=" + applied +
                 ", created=" + created +
                 ", deleted=" + deleted +
                 ", updated=" + updated +
@@ -72,28 +72,26 @@ public class Vacancy {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Vacancy vacancy = (Vacancy) o;
-        return id == vacancy.id && viewed == vacancy.viewed && title.equals(vacancy.title) && jobPosition.equals(vacancy.jobPosition) && Objects.equals(description, vacancy.description) && Objects.equals(salary, vacancy.salary) && Objects.equals(location, vacancy.location) && created.equals(vacancy.created) && Objects.equals(deleted, vacancy.deleted) && Objects.equals(updated, vacancy.updated) && Objects.equals(applicants, vacancy.applicants);
+        return getId() == vacancy.getId() &&
+                getViewed() == vacancy.getViewed() &&
+                getApplied() == vacancy.getApplied() &&
+                getTitle().equals(vacancy.getTitle()) &&
+                Objects.equals(getDescription(), vacancy.getDescription()) &&
+                Objects.equals(getSalary(), vacancy.getSalary()) &&
+                Objects.equals(getLocation(), vacancy.getLocation()) &&
+                getCreated().equals(vacancy.getCreated()) &&
+                Objects.equals(getDeleted(), vacancy.getDeleted()) &&
+                Objects.equals(getUpdated(), vacancy.getUpdated()) &&
+                Objects.equals(getApplicants(), vacancy.getApplicants());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, jobPosition, description, salary, location, viewed, created, deleted, updated, applicants);
-    }
-
-    public String getSalary() {
-        return salary;
-    }
-
-    public void setSalary(String salary) {
-        this.salary = salary;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
+        return Objects.hash(
+                getId(), getTitle(), getDescription(), getSalary(), getLocation(),
+                getViewed(), getApplied(), getCreated(), getDeleted(), getUpdated(),
+                getApplicants()
+        );
     }
 
     public long getId() {
@@ -102,14 +100,6 @@ public class Vacancy {
 
     public void setId(long id) {
         this.id = id;
-    }
-
-    public int getViewed() {
-        return viewed;
-    }
-
-    public void setViewed(int viewed) {
-        this.viewed = viewed;
     }
 
     public String getTitle() {
@@ -128,12 +118,36 @@ public class Vacancy {
         this.description = description;
     }
 
-    public String getJobPosition() {
-        return jobPosition;
+    public String getSalary() {
+        return salary;
     }
 
-    public void setJobPosition(String jobPosition) {
-        this.jobPosition = jobPosition;
+    public void setSalary(String salary) {
+        this.salary = salary;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public int getViewed() {
+        return viewed;
+    }
+
+    public void setViewed(int viewed) {
+        this.viewed = viewed;
+    }
+
+    public int getApplied() {
+        return applied;
+    }
+
+    public void setApplied(int applied) {
+        this.applied = applied;
     }
 
     public LocalDateTime getCreated() {

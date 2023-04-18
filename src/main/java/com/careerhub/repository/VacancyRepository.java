@@ -9,7 +9,9 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface VacancyRepository extends CrudRepository<Vacancy, Long> {
-    Page<Vacancy> findAll(Pageable pageable);
+    Vacancy findByIdAndDeletedIsNull(Long id);
 
-    Page<Vacancy> searchByTitleContainingIgnoreCase(String query, PageRequest pageRequest);
+    Page<Vacancy> findAllAndDeletedIsNull(Pageable pageable);
+
+    Page<Vacancy> searchByTitleContainingIgnoreCaseAndDeletedIsNull(String query, PageRequest pageRequest);
 }
