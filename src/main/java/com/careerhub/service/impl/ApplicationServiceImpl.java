@@ -7,6 +7,7 @@ import com.careerhub.service.ApplicationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class ApplicationServiceImpl implements ApplicationService {
@@ -54,7 +55,17 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public Page<ApplicationResponseDTO> getApplications(String sort, String order, String statusPresent, int page, int size) {
+    public Page<ApplicationResponseDTO> getApplications(Long vacancyId, String sort, String order, String statusPresent, int page, int size) {
+        return null;
+    }
+
+    @Override
+    public ApplicationResponseDTO createApplication(MultipartFile file, ApplicationRequestDTO applicationRequestDTO) {
+        return null;
+    }
+
+    @Override
+    public Page<ApplicationResponseDTO> getApplicationByUserDetailsId(Long userDetailsId) {
         return null;
     }
 }

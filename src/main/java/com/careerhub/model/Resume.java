@@ -20,7 +20,7 @@ public class Resume extends TimestampedEntity {
     @Column(name = "file_data", nullable = false)
     private byte[] fileData;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_details_id", nullable = false)
     private UserDetails userDetails;
 
@@ -39,11 +39,9 @@ public class Resume extends TimestampedEntity {
         return "Resume{" +
                 "id=" + id +
                 ", fileName='" + fileName + '\'' +
-                ", fileData=" + Arrays.toString(fileData) +
                 ", userDetails=" + userDetails +
                 ", lastUsed=" + lastUsed +
-                ", applications=" + applications +
-                "} " + super.toString();
+                '}';
     }
 
     @Override

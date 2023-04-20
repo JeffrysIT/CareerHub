@@ -31,7 +31,7 @@ public class Vacancy extends TimestampedEntity {
     @Column(name = "applied")
     private int applied;
 
-    @ManyToMany(mappedBy = "appliedVacancies")
+    @OneToMany(mappedBy = "vacancy")
     private List<Application> applications;
 
     public Vacancy() {

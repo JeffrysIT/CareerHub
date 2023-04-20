@@ -2,7 +2,6 @@ package com.careerhub.model;
 
 import jakarta.persistence.*;
 
-import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -27,13 +26,9 @@ public class Application extends TimestampedEntity {
     @JoinColumn(name = "user_details_id", nullable = false)
     private UserDetails userDetails;
 
-    @ManyToMany
-    @JoinTable(
-            name = "applied_vacancies",
-            joinColumns = {@JoinColumn(name = "application_id")},
-            inverseJoinColumns = {@JoinColumn(name = "vacancy_id")}
-    )
-    private List<Vacancy> appliedVacancies;
+    @ManyToOne
+    @JoinColumn(name = "vacancy_id")
+    private Vacancy vacancy;
 
     public Application() {
     }
@@ -43,12 +38,12 @@ public class Application extends TimestampedEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Application that = (Application) o;
-        return getId().equals(that.getId()) && Objects.equals(getCoverLetter(), that.getCoverLetter()) && getStatus() == that.getStatus() && Objects.equals(getResume(), that.getResume()) && Objects.equals(getUserDetails(), that.getUserDetails()) && Objects.equals(getAppliedVacancies(), that.getAppliedVacancies());
+        return getId().equals(that.getId()) && Objects.equals(getCoverLetter(), that.getCoverLetter()) && getStatus() == that.getStatus() && Objects.equals(getResume(), that.getResume()) && Objects.equals(getUserDetails(), that.getUserDetails()) && Objects.equals(getVacancy(), that.getVacancy());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getCoverLetter(), getStatus(), getResume(), getUserDetails(), getAppliedVacancies());
+        return Objects.hash(getId(), getCoverLetter(), getStatus(), getResume(), getUserDetails(), getVacancy());
     }
 
     public Long getId() {
@@ -91,11 +86,11 @@ public class Application extends TimestampedEntity {
         this.userDetails = userDetails;
     }
 
-    public List<Vacancy> getAppliedVacancies() {
-        return appliedVacancies;
+    public Vacancy getVacancy() {
+        return vacancy;
     }
 
-    public void setAppliedVacancies(List<Vacancy> appliedVacancies) {
-        this.appliedVacancies = appliedVacancies;
+    public void setVacancy(Vacancy vacancy) {
+        this.vacancy = vacancy;
     }
 }
