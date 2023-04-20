@@ -2,8 +2,12 @@ package com.careerhub.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.time.LocalDateTime;
+import java.util.List;
 
-public class VacancyResponseDTO {
+
+public class VacancyDTO {
+
     @JsonProperty("id")
     private long id;
 
@@ -24,6 +28,15 @@ public class VacancyResponseDTO {
 
     @JsonProperty("applied")
     private int applied;
+
+    @JsonProperty("applicant_ids")
+    private List<Long> applicantIds;
+
+    @JsonProperty("created")
+    private LocalDateTime created;
+
+    @JsonProperty("updated")
+    private LocalDateTime updated;
 
     public long getId() {
         return id;
@@ -79,5 +92,29 @@ public class VacancyResponseDTO {
 
     public void setApplied(int applied) {
         this.applied = applied;
+    }
+
+    public List<Long> getApplicantIds() {
+        return applicantIds;
+    }
+
+    public void setApplicantIds(List<Long> applicantIds) {
+        this.applicantIds = applicantIds;
+    }
+
+    public LocalDateTime getCreated() {
+        return created;
+    }
+
+    public void setCreated(LocalDateTime created) {
+        this.created = created;
+    }
+
+    public LocalDateTime getUpdated() {
+        return updated;
+    }
+
+    public void setUpdated(LocalDateTime updated) {
+        this.updated = updated;
     }
 }

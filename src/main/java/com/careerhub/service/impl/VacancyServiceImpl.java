@@ -1,7 +1,7 @@
 package com.careerhub.service.impl;
 
-import com.careerhub.dto.VacancyRequestDTO;
-import com.careerhub.dto.VacancyResponseDTO;
+import com.careerhub.dto.VacancyUpdateDTO;
+import com.careerhub.dto.VacancyDTO;
 import com.careerhub.dto.mapper.MapStructMapper;
 import com.careerhub.exception.ResourceAlreadyExistException;
 import com.careerhub.exception.ResourceNotFoundException;
@@ -44,7 +44,7 @@ public class VacancyServiceImpl implements VacancyService {
     }
 
     @Override
-    public VacancyResponseDTO createVacancy(VacancyRequestDTO vacancyDto) {
+    public VacancyDTO createVacancy(VacancyUpdateDTO vacancyDto) {
         Vacancy vacancy = mapper.vacancyRequestDTOtoVacancy(vacancyDto);
         if (vacancyRepository.existsById(vacancy.getId())) {
             throw new ResourceAlreadyExistException("Vacancy with id: " + vacancy.getId() + " already exist");
@@ -55,7 +55,7 @@ public class VacancyServiceImpl implements VacancyService {
     }
 
     @Override
-    public VacancyResponseDTO updateVacancy(Long id, VacancyRequestDTO vacancyRequestDTO) {
+    public VacancyDTO updateVacancy(Long id, VacancyUpdateDTO vacancyUpdateDTO) {
 
         Vacancy existingVacancy = vacancyRepository.findByIdAndDeletedIsNull(id);
         if (existingVacancy == null || existingVacancy.getDeleted() != null) {
@@ -66,7 +66,7 @@ public class VacancyServiceImpl implements VacancyService {
             throw new IllegalArgumentException("param id can't be changed via request");
         }
 
-        Vacancy vacancy = mapper.vacancyRequestDTOtoVacancy(vacancyRequestDTO);
+        Vacancy vacancy = mapper.vacancyRequestDTOtoVacancy(vacancyUpdateDTO);
         existingVacancy.setId(vacancy.getId());
         existingVacancy.setTitle(vacancy.getTitle());
         existingVacancy.setDescription(vacancy.getDescription());
@@ -91,7 +91,7 @@ public class VacancyServiceImpl implements VacancyService {
     }
 
     @Override
-    public VacancyResponseDTO getVacancyById(Long id) {
+    public VacancyDTO getVacancyById(Long id) {
         Vacancy existingVacancy = vacancyRepository.findByIdAndDeletedIsNull(id);
         if (existingVacancy == null || existingVacancy.getDeleted() != null) {
             throw new ResourceNotFoundException("Vacancy not found by provided id: " + id);
@@ -101,7 +101,7 @@ public class VacancyServiceImpl implements VacancyService {
     }
 
     @Override
-    public VacancyResponseDTO addApplicationToVacancy(Long vacancyId, Long applicationId) {
+    public VacancyDTO addApplicationToVacancy(Long vacancyId, Long applicationId) {
         Vacancy vacancy = vacancyRepository.findByIdAndDeletedIsNull(vacancyId);
         Application application = applicationRepository.findById(applicationId).orElse(null);
         if (vacancy == null || vacancy.getDeleted() != null) {
@@ -116,7 +116,7 @@ public class VacancyServiceImpl implements VacancyService {
     }
 
     @Override
-    public Page<VacancyResponseDTO> getVacancies(String sort, String order, int page, int size) {
+    public Page<VacancyDTO> getVacancies(String sort, String order, int page, int size) {
         validateSearchRequest(null, sort, order, page, size);
         PageRequest pageRequest = createPageRequestBy(sort, order, page, size);
         return vacancyRepository.findAllAndDeletedIsNull(pageRequest)
@@ -124,7 +124,7 @@ public class VacancyServiceImpl implements VacancyService {
     }
 
     @Override
-    public Page<VacancyResponseDTO> searchVacancies(String query, String sort, String order, int page, int size) {
+    public Page<VacancyDTO> searchVacancies(String query, String sort, String order, int page, int size) {
         validateSearchRequest(query, sort, order, page, size);
         PageRequest pageRequest = createPageRequestBy(sort, order, page, size);
         return vacancyRepository.searchByTitleContainingIgnoreCaseAndDeletedIsNull(query, pageRequest)
