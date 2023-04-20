@@ -17,13 +17,13 @@ public class UserDetailsAdminController {
     private UserDetailsService userDetailsService;
 
     @PostMapping
-    public ResponseEntity<UserDetails> createUser(@RequestBody UserDetailsRequestDTO userDTO) {
-        UserDetails createdUser = userDetailsService.saveUserDetails(userDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
+    public ResponseEntity<UserDetails> createUserDetails(@RequestBody UserDetailsRequestDTO userDetailsDTO) {
+        UserDetails createdUserDetails = userDetailsService.saveUserDetails(userDetailsDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdUserDetails);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable("id") Long id) {
+    public ResponseEntity<Void> deleteUserDetails(@PathVariable("id") Long id) {
         userDetailsService.deleteUserDetails(id);
         return ResponseEntity.noContent().build();
     }

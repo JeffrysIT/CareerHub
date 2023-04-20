@@ -16,15 +16,16 @@ public class UserDetailsController {
     private UserDetailsService userDetailsService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserDetails> getUserById(@PathVariable("id") Long id) {
-        UserDetails user = userDetailsService.getUserDetailsById(id);
-        return ResponseEntity.ok(user);
+    public ResponseEntity<UserDetails> getUserDetailsById(@PathVariable("id") Long id) {
+        UserDetails userDetails = userDetailsService.getUserDetailsById(id);
+        return ResponseEntity.ok(userDetails);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserDetails> updateUser(@PathVariable("id") Long id, @RequestBody UserDetailsRequestDTO userDTO) {
-        UserDetails updatedUser = userDetailsService.updateUserDetails(id, userDTO);
-        return ResponseEntity.ok(updatedUser);
+    public ResponseEntity<UserDetails> updateUserDetails(@PathVariable("id") Long id,
+                                                         @RequestBody UserDetailsRequestDTO userDetailsDTO) {
+        UserDetails updatedUserDetails = userDetailsService.updateUserDetails(id, userDetailsDTO);
+        return ResponseEntity.ok(updatedUserDetails);
     }
 
 }
