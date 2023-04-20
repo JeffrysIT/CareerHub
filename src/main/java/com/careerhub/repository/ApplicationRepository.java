@@ -6,4 +6,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ApplicationRepository extends CrudRepository<Application, Long> {
+
+    Application findByIdAndDeletedIsNull(Long id);
+
 }

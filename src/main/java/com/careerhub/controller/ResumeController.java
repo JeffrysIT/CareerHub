@@ -1,7 +1,7 @@
 package com.careerhub.controller;
 
-import com.careerhub.dto.ResumeRequestDTO;
-import com.careerhub.dto.ResumeResponseDTO;
+import com.careerhub.dto.ResumeCreateDTO;
+import com.careerhub.dto.ResumeDTO;
 import com.careerhub.model.Resume;
 import com.careerhub.service.ResumeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,10 +32,10 @@ public class ResumeController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ResumeResponseDTO> updateResume(@PathVariable("id") Long id,
-                                                          @RequestBody ResumeRequestDTO resumeRequestDTO) {
-        ResumeResponseDTO resumeResponseDTO = resumeService.update(id, resumeRequestDTO);
-        return ResponseEntity.ok(resumeResponseDTO);
+    public ResponseEntity<ResumeDTO> updateResume(@PathVariable("id") Long id,
+                                                  @RequestBody ResumeCreateDTO resumeCreateDTO) {
+        ResumeDTO resumeDTO = resumeService.update(id, resumeCreateDTO);
+        return ResponseEntity.ok(resumeDTO);
     }
 
     @DeleteMapping("/{id}")
@@ -45,11 +45,11 @@ public class ResumeController {
     }
 
     @GetMapping("/user-details/{userDetailsId}")
-    ResponseEntity<List<ResumeResponseDTO>> getResumeList(
+    ResponseEntity<List<ResumeDTO>> getResumeList(
             @PathVariable("userDetailsId") Long userDetailsId
     ) {
-        List<ResumeResponseDTO> resumeResponseDTOList = resumeService.getResumeList(userDetailsId);
-        return ResponseEntity.ok(resumeResponseDTOList);
+        List<ResumeDTO> resumeDTOList = resumeService.getResumeList(userDetailsId);
+        return ResponseEntity.ok(resumeDTOList);
     }
 
     @GetMapping("/{id}/download")

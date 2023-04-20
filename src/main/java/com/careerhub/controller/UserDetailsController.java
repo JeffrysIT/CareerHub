@@ -1,6 +1,6 @@
 package com.careerhub.controller;
 
-import com.careerhub.dto.UserDetailsRequestDTO;
+import com.careerhub.dto.UserDetailsCreateDTO;
 import com.careerhub.model.UserDetails;
 import com.careerhub.service.UserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,13 +24,13 @@ public class UserDetailsController {
 
     @PutMapping("/{id}")
     public ResponseEntity<UserDetails> updateUserDetails(@PathVariable("id") Long id,
-                                                         @RequestBody UserDetailsRequestDTO userDetailsDTO) {
+                                                         @RequestBody UserDetailsCreateDTO userDetailsDTO) {
         UserDetails updatedUserDetails = userDetailsService.updateUserDetails(id, userDetailsDTO);
         return ResponseEntity.ok(updatedUserDetails);
     }
 
     @PostMapping
-    public ResponseEntity<UserDetails> createUserDetails(@RequestBody UserDetailsRequestDTO userDetailsDTO) {
+    public ResponseEntity<UserDetails> createUserDetails(@RequestBody UserDetailsCreateDTO userDetailsDTO) {
         UserDetails createdUserDetails = userDetailsService.saveUserDetails(userDetailsDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUserDetails);
     }

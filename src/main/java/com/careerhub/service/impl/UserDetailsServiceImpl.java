@@ -1,6 +1,6 @@
 package com.careerhub.service.impl;
 
-import com.careerhub.dto.UserDetailsRequestDTO;
+import com.careerhub.dto.UserDetailsCreateDTO;
 import com.careerhub.dto.mapper.MapStructMapper;
 import com.careerhub.exception.ResourceNotFoundException;
 import com.careerhub.model.UserDetails;
@@ -28,8 +28,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     }
 
     @Override
-    public UserDetails saveUserDetails(UserDetailsRequestDTO userDetailsRequestDTO) {
-        UserDetails userDetails = mapper.userDetailsRequestDTOtoUserDetails(userDetailsRequestDTO);
+    public UserDetails saveUserDetails(UserDetailsCreateDTO userDetailsCreateDTO) {
+        UserDetails userDetails = mapper.userDetailsRequestDTOtoUserDetails(userDetailsCreateDTO);
         return userDetailsRepository.save(userDetails);
     }
 
@@ -39,8 +39,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     }
 
     @Override
-    public UserDetails updateUserDetails(Long id, UserDetailsRequestDTO userDetailsRequestDTO) {
-        UserDetails userDetails = mapper.userDetailsRequestDTOtoUserDetails(userDetailsRequestDTO);
+    public UserDetails updateUserDetails(Long id, UserDetailsCreateDTO userDetailsCreateDTO) {
+        UserDetails userDetails = mapper.userDetailsRequestDTOtoUserDetails(userDetailsCreateDTO);
         UserDetails existingUser = userDetailsRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("UserDetails not found with id: " + id));
 

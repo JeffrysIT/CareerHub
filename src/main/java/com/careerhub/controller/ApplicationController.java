@@ -1,7 +1,8 @@
 package com.careerhub.controller;
 
-import com.careerhub.dto.ApplicationRequestDTO;
-import com.careerhub.dto.ApplicationResponseDTO;
+import com.careerhub.dto.ApplicationCreateDTO;
+import com.careerhub.dto.ApplicationDTO;
+import com.careerhub.dto.ApplicationUpdateDTO;
 import com.careerhub.service.ApplicationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,34 +19,37 @@ public class ApplicationController {
     private ApplicationService applicationService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApplicationResponseDTO> getApplicationById(@PathVariable Long id) {
-        ApplicationResponseDTO application = applicationService.getApplicationById(id);
-        return ResponseEntity.ok(application);
+    public ResponseEntity<ApplicationDTO> getApplicationById(@PathVariable Long id) {
+        ApplicationDTO applicationDTO = applicationService.getApplication(id);
+        return ResponseEntity.ok(applicationDTO);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApplicationResponseDTO> updateApplication(@PathVariable Long id, @RequestBody ApplicationRequestDTO applicationRequestDTO) {
-        ApplicationResponseDTO updatedApplication = applicationService.updateApplication(id, applicationRequestDTO);
-        return ResponseEntity.ok(updatedApplication);
+    public ResponseEntity<ApplicationDTO> updateApplication(
+            @PathVariable Long id,
+            @RequestBody ApplicationUpdateDTO applicationUpdateDTO
+    ) {
+        ApplicationDTO applicationDTO = applicationService.updateApplication(id, applicationUpdateDTO);
+        return ResponseEntity.ok(applicationDTO);
     }
 
     @PostMapping
-    public ResponseEntity<ApplicationResponseDTO> createApplication(@RequestBody ApplicationRequestDTO applicationRequestDTO) {
-        ApplicationResponseDTO savedApplication = applicationService.createApplication(applicationRequestDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedApplication);
+    public ResponseEntity<ApplicationDTO> createApplication(@RequestBody ApplicationCreateDTO applicationCreateDTO) {
+        ApplicationDTO applicationDTO = applicationService.createApplication(applicationCreateDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(applicationDTO);
     }
 
     @PostMapping("/upload")
-    public ResponseEntity<ApplicationResponseDTO> createApplicationWithUploadResume(
-            @RequestParam("file") MultipartFile file, @RequestBody ApplicationRequestDTO applicationRequestDTO) {
-        ApplicationResponseDTO savedApplication = applicationService.createApplication(file, applicationRequestDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedApplication);
+    public ResponseEntity<ApplicationDTO> createApplicationWithUploadResume(
+            @RequestParam("file") MultipartFile file, @RequestBody ApplicationCreateDTO applicationCreateDTO) {
+        ApplicationDTO applicationDTO = applicationService.createApplication(file, applicationCreateDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(applicationDTO);
     }
 
     @GetMapping("/user-details/{userDetailsId}")
-    public ResponseEntity<Page<ApplicationResponseDTO>> getAllUserDetailsApplications(
+    public ResponseEntity<Page<ApplicationDTO>> getAllUserDetailsApplications(
             @RequestParam("userDetailsId") Long userDetailsId) {
-        Page<ApplicationResponseDTO> applicationResponseDTOPage = applicationService.getApplicationByUserDetailsId(userDetailsId);
+        Page<ApplicationDTO> applicationResponseDTOPage = applicationService.getApplicationByUserDetailsId(userDetailsId);
         return ResponseEntity.ok(applicationResponseDTOPage);
     }
 
@@ -56,26 +60,26 @@ public class ApplicationController {
     }
 
     @PatchMapping("/{id}/status/reject")
-    public ResponseEntity<Void> rejectApplication(@PathVariable Long id) {
+    public ResponseEntity<Void> toRejectApplication(@PathVariable Long id) {
         applicationService.changeStatusToRejected(id);
         return ResponseEntity.ok().build();
 
     }
 
     @PatchMapping("/{id}/status/accept")
-    public ResponseEntity<Void> acceptApplication(@PathVariable Long id) {
+    public ResponseEntity<Void> toAcceptApplication(@PathVariable Long id) {
         applicationService.changeStatusToAccepted(id);
         return ResponseEntity.ok().build();
     }
 
-    @PatchMapping("{id}/status/considering")
-    public ResponseEntity<Void> consideringApplication(@PathVariable Long id) {
-        applicationService.changeStatusToConsidering(id);
+    @PatchMapping("{id}/status/consideration")
+    public ResponseEntity<Void> toConsiderationApplication(@PathVariable Long id) {
+        applicationService.changeStatusToConsideration(id);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/vacancy/{vacancyId}")
-    ResponseEntity<Page<ApplicationResponseDTO>> getApplications(
+    ResponseEntity<Page<ApplicationDTO>> getApplications(
             @PathVariable("vacancyId") Long vacancyId,
             @RequestParam(name = "sort", defaultValue = "created") String sort,
             @RequestParam(name = "order", defaultValue = "DESC") String order,
@@ -83,7 +87,7 @@ public class ApplicationController {
             @RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "10") int size
     ) {
-        Page<ApplicationResponseDTO> applicationResponseDTOPage = applicationService.getApplications(vacancyId, sort, order, statusPresent, page, size);
+        Page<ApplicationDTO> applicationResponseDTOPage = applicationService.getApplications(vacancyId, sort, order, statusPresent, page, size);
         return ResponseEntity.ok(applicationResponseDTOPage);
     }
 

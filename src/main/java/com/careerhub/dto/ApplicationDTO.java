@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalDateTime;
 
-public class ApplicationResponseDTO {
+public class ApplicationDTO {
 
     @JsonProperty("id")
     private Long id;
@@ -25,9 +25,11 @@ public class ApplicationResponseDTO {
     @JsonProperty("vacancyId")
     private Long vacancyId;
 
-    private LocalDateTime createdAt;
+    @JsonProperty("updated")
+    private LocalDateTime updated;
 
-    private LocalDateTime updatedAt;
+    @JsonProperty("created")
+    private LocalDateTime created;
 
     public Long getId() {
         return id;
@@ -77,19 +79,19 @@ public class ApplicationResponseDTO {
         this.vacancyId = vacancyId;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
+    public LocalDateTime getUpdated() {
+        return updated;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
+    public void setUpdated(LocalDateTime updated) {
+        this.updated = updated;
     }
 
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
+    public LocalDateTime getCreated() {
+        return created;
     }
 
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
+    public void setCreated(LocalDateTime created) {
+        this.created = created;
     }
 }

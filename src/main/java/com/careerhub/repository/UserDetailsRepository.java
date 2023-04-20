@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface UserDetailsRepository extends CrudRepository<UserDetails, Long> {
+    UserDetails findByIdAndDeletedIsNull(Long id);
 }
