@@ -1,5 +1,6 @@
 package com.careerhub.controller;
 
+import com.careerhub.dto.VacancyCreateDTO;
 import com.careerhub.dto.VacancyUpdateDTO;
 import com.careerhub.dto.VacancyDTO;
 import com.careerhub.service.VacancyService;
@@ -18,8 +19,8 @@ public class VacancyController {
 
     @GetMapping("/{id}")
     public ResponseEntity<VacancyDTO> getVacancyById(@PathVariable("id") Long id) {
-        VacancyDTO vacancy = vacancyService.getVacancyById(id);
-        return ResponseEntity.ok(vacancy);
+        VacancyDTO vacancyDTO = vacancyService.getVacancyById(id);
+        return ResponseEntity.ok(vacancyDTO);
     }
 
     @PutMapping("/{vacancyId}/apply/{userId}")
@@ -55,9 +56,9 @@ public class VacancyController {
     }
 
     @PostMapping
-    public ResponseEntity<VacancyDTO> createVacancy(@RequestBody VacancyUpdateDTO vacancyUpdateDTO) {
-        VacancyDTO vacancy = vacancyService.createVacancy(vacancyUpdateDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(vacancy);
+    public ResponseEntity<VacancyDTO> createVacancy(@RequestBody VacancyCreateDTO vacancyCreateDTO) {
+        VacancyDTO vacancyDTO = vacancyService.createVacancy(vacancyCreateDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(vacancyDTO);
     }
 
     @PutMapping("/{id}")
@@ -65,12 +66,12 @@ public class VacancyController {
             @PathVariable("id") Long id,
             @RequestBody VacancyUpdateDTO vacancyUpdateDTO
     ) {
-        VacancyDTO vacancy = vacancyService.updateVacancy(id, vacancyUpdateDTO);
-        return ResponseEntity.ok(vacancy);
+        VacancyDTO vacancyDTO = vacancyService.updateVacancy(id, vacancyUpdateDTO);
+        return ResponseEntity.ok(vacancyDTO);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<VacancyDTO> deleteVacancy(@PathVariable("id") Long id) {
+    public ResponseEntity<Void> deleteVacancy(@PathVariable("id") Long id) {
         vacancyService.deleteVacancy(id);
         return ResponseEntity.noContent().build();
     }
