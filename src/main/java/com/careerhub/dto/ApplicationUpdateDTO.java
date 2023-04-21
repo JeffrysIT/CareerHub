@@ -5,10 +5,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ApplicationUpdateDTO {
 
-    @JsonProperty(value = "coverLetter", required = true)
+    @JsonProperty(value = "cover_letter", required = true)
     private String coverLetter;
 
-    @JsonProperty(value = "resumeId", required = true)
+    @JsonProperty(value = "resume_id", required = true)
     private Long resumeId;
 
     public String getCoverLetter() {

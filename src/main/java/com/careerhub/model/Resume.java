@@ -21,8 +21,8 @@ public class Resume extends TimestampedEntity {
     private byte[] fileData;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_details_id", nullable = false)
-    private UserDetails userDetails;
+    @JoinColumn(name = "candidate_id", nullable = false)
+    private Candidate candidate;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "last_used")
@@ -35,31 +35,16 @@ public class Resume extends TimestampedEntity {
     }
 
     @Override
-    public String toString() {
-        return "Resume{" +
-                "id=" + id +
-                ", fileName='" + fileName + '\'' +
-                ", userDetails=" + userDetails +
-                ", lastUsed=" + lastUsed +
-                '}';
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Resume)) return false;
         Resume resume = (Resume) o;
-        return getId() == resume.getId() &&
-                getFileName().equals(resume.getFileName()) &&
-                Arrays.equals(getFileData(), resume.getFileData()) &&
-                getUserDetails().equals(resume.getUserDetails()) &&
-                Objects.equals(getLastUsed(), resume.getLastUsed()) &&
-                Objects.equals(getApplications(), resume.getApplications());
+        return getId() == resume.getId() && getFileName().equals(resume.getFileName()) && Arrays.equals(getFileData(), resume.getFileData()) && Objects.equals(getCandidate(), resume.getCandidate()) && Objects.equals(getLastUsed(), resume.getLastUsed()) && Objects.equals(getApplications(), resume.getApplications());
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(getId(), getFileName(), getUserDetails(), getLastUsed(), getApplications());
+        int result = Objects.hash(getId(), getFileName(), getCandidate(), getLastUsed(), getApplications());
         result = 31 * result + Arrays.hashCode(getFileData());
         return result;
     }
@@ -88,12 +73,12 @@ public class Resume extends TimestampedEntity {
         this.fileData = fileData;
     }
 
-    public UserDetails getUserDetails() {
-        return userDetails;
+    public Candidate getCandidate() {
+        return candidate;
     }
 
-    public void setUserDetails(UserDetails userDetails) {
-        this.userDetails = userDetails;
+    public void setCandidate(Candidate candidate) {
+        this.candidate = candidate;
     }
 
     public LocalDateTime getLastUsed() {

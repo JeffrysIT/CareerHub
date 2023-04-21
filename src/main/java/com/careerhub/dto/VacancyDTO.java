@@ -29,9 +29,6 @@ public class VacancyDTO {
     @JsonProperty("applied")
     private int applied;
 
-    @JsonProperty("applicant_ids")
-    private List<Long> applicantIds;
-
     @JsonProperty("created")
     private LocalDateTime created;
 
@@ -92,14 +89,6 @@ public class VacancyDTO {
 
     public void setApplied(int applied) {
         this.applied = applied;
-    }
-
-    public List<Long> getApplicantIds() {
-        return applicantIds;
-    }
-
-    public void setApplicantIds(List<Long> applicantIds) {
-        this.applicantIds = applicantIds;
     }
 
     public LocalDateTime getCreated() {

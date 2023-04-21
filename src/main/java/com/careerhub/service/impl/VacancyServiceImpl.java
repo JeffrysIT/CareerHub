@@ -1,5 +1,6 @@
 package com.careerhub.service.impl;
 
+import com.careerhub.dto.VacancyCreateDTO;
 import com.careerhub.dto.VacancyUpdateDTO;
 import com.careerhub.dto.VacancyDTO;
 import com.careerhub.dto.mapper.MapStructMapper;
@@ -7,10 +8,9 @@ import com.careerhub.exception.ResourceAlreadyExistException;
 import com.careerhub.exception.ResourceNotFoundException;
 import com.careerhub.model.Application;
 import com.careerhub.model.Vacancy;
-import com.careerhub.repository.ApplicationRepository;
 import com.careerhub.repository.VacancyRepository;
+import com.careerhub.service.ApplicationService;
 import com.careerhub.service.VacancyService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -24,82 +24,67 @@ import java.util.List;
 public class VacancyServiceImpl implements VacancyService {
 
     private final VacancyRepository vacancyRepository;
-    private final ApplicationRepository applicationRepository;
-
+    private final ApplicationService applicationService;
     private final MapStructMapper mapper;
 
     private final List<String> SORT_FIELDS =
             List.of("created", "updated", "title", "location", "viewed", "applied");
     public final static int MAX_QUERY_LEN = 1000;
 
-
-    @Autowired
     public VacancyServiceImpl(
             VacancyRepository vacancyRepository,
-            ApplicationRepository applicationRepository, MapStructMapper mapper
+            ApplicationService applicationService,
+            MapStructMapper mapper
     ) {
         this.vacancyRepository = vacancyRepository;
-        this.applicationRepository = applicationRepository;
+        this.applicationService = applicationService;
         this.mapper = mapper;
     }
 
     @Override
-    public VacancyDTO createVacancy(VacancyUpdateDTO vacancyDto) {
-        Vacancy vacancy = mapper.vacancyRequestDTOtoVacancy(vacancyDto);
+    public VacancyDTO createVacancy(VacancyCreateDTO vacancyDto) {
+        Vacancy vacancy = mapper.mapToVacancyEntity(vacancyDto);
         if (vacancyRepository.existsById(vacancy.getId())) {
             throw new ResourceAlreadyExistException("Vacancy with id: " + vacancy.getId() + " already exist");
         }
         vacancy.setCreated(LocalDateTime.now());
         Vacancy vacancyResult = vacancyRepository.save(vacancy);
-        return mapper.vacancyToVacancyResponseDTO(vacancyResult);
+        return mapper.mapToVacancyDTO(vacancyResult);
     }
 
     @Override
     public VacancyDTO updateVacancy(Long id, VacancyUpdateDTO vacancyUpdateDTO) {
+        Vacancy existingVacancy = findVacancy(id);
 
-        Vacancy existingVacancy = vacancyRepository.findByIdAndDeletedIsNull(id);
-        if (existingVacancy == null || existingVacancy.getDeleted() != null) {
-            throw new ResourceNotFoundException("Vacancy not found by provided id: " + id);
-        }
-
-        if (existingVacancy.getId() != id) {
-            throw new IllegalArgumentException("param id can't be changed via request");
-        }
-
-        Vacancy vacancy = mapper.vacancyRequestDTOtoVacancy(vacancyUpdateDTO);
-        existingVacancy.setId(vacancy.getId());
-        existingVacancy.setTitle(vacancy.getTitle());
-        existingVacancy.setDescription(vacancy.getDescription());
-        existingVacancy.setSalary(vacancy.getSalary());
-        existingVacancy.setLocation(vacancy.getLocation());
+        existingVacancy.setTitle(vacancyUpdateDTO.getTitle());
+        existingVacancy.setDescription(vacancyUpdateDTO.getDescription());
+        existingVacancy.setSalary(vacancyUpdateDTO.getSalary());
+        existingVacancy.setLocation(vacancyUpdateDTO.getLocation());
         existingVacancy.setUpdated(LocalDateTime.now());
-        refreshApplied(existingVacancy);
 
-        Vacancy vacancyResult = vacancyRepository.save(existingVacancy);
-        return mapper.vacancyToVacancyResponseDTO(vacancyResult);
+        Vacancy vacancyResponse = vacancyRepository.save(existingVacancy);
+        return mapper.mapToVacancyDTO(vacancyResponse);
     }
 
     private void refreshApplied(Vacancy vacancy) {
-        int applied = vacancy.getApplications().size();
+        int applied = 0;
+        if (vacancy.getApplications() != null) {
+            applied = vacancy.getApplications().size();
+        }
         vacancy.setApplied(applied);
     }
 
     @Override
     public void deleteVacancy(Long id) {
-        Vacancy existingVacancy = vacancyRepository.findById(id).orElseThrow(()
-                -> new ResourceNotFoundException("Vacancy not found by id: " + id));
-        if (existingVacancy.getDeleted() != null) {
-            throw new ResourceNotFoundException("Vacancy not found by id: " + id);
-        } else {
-            existingVacancy.setDeleted(LocalDateTime.now());
-        }
+        Vacancy existingVacancy = findVacancy(id);
+        existingVacancy.setDeleted(LocalDateTime.now());
     }
 
     @Override
     public VacancyDTO getVacancyById(Long id) {
         Vacancy existingVacancy = findVacancy(id);
         increaseView(existingVacancy);
-        return mapper.vacancyToVacancyResponseDTO(existingVacancy);
+        return mapper.mapToVacancyDTO(existingVacancy);
     }
 
     private void increaseView(Vacancy vacancy) {
@@ -109,17 +94,12 @@ public class VacancyServiceImpl implements VacancyService {
 
     @Override
     public VacancyDTO addApplicationToVacancy(Long vacancyId, Long applicationId) {
-        Vacancy vacancy = vacancyRepository.findByIdAndDeletedIsNull(vacancyId);
-        Application application = applicationRepository.findById(applicationId).orElse(null);
-        if (vacancy == null || vacancy.getDeleted() != null) {
-            throw new ResourceNotFoundException("Vacancy not found by provided id: " + vacancyId);
-        }
-        if (application == null) {
-            throw new ResourceNotFoundException("Application not found by provided id: " + applicationId);
-        }
-
+        Vacancy vacancy = findVacancy(vacancyId);
+        Application application = applicationService.findApplication(applicationId);
+        vacancy.getApplications().add(application);
+        refreshApplied(vacancy);
         Vacancy vacancyResponse = vacancyRepository.save(vacancy);
-        return mapper.vacancyToVacancyResponseDTO(vacancyResponse);
+        return mapper.mapToVacancyDTO(vacancyResponse);
     }
 
     @Override
@@ -127,7 +107,7 @@ public class VacancyServiceImpl implements VacancyService {
         validateSearchRequest(null, sort, order, page, size);
         PageRequest pageRequest = createPageRequestBy(sort, order, page, size);
         return vacancyRepository.findAllAndDeletedIsNull(pageRequest)
-                .map(mapper::vacancyToVacancyResponseDTO);
+                .map(mapper::mapToVacancyDTO);
     }
 
     @Override
@@ -135,7 +115,7 @@ public class VacancyServiceImpl implements VacancyService {
         validateSearchRequest(query, sort, order, page, size);
         PageRequest pageRequest = createPageRequestBy(sort, order, page, size);
         return vacancyRepository.searchByTitleContainingIgnoreCaseAndDeletedIsNull(query, pageRequest)
-                .map(mapper::vacancyToVacancyResponseDTO);
+                .map(mapper::mapToVacancyDTO);
     }
 
     private void validateSearchRequest(String query, String sort, String order, int page, int size) {
@@ -158,12 +138,17 @@ public class VacancyServiceImpl implements VacancyService {
 
     @Override
     public Vacancy findVacancy(Long vacancyId) {
-        if (vacancyId == null) throw new IllegalArgumentException("vacancyId can't be null or less than 0");
-        Vacancy vacancy = vacancyRepository.findByIdAndDeletedIsNull(vacancyId);
-        if (vacancy == null) {
-            throw new ResourceNotFoundException("Vacancy not found by id: " + vacancyId);
-        }
-        return vacancy;
+        if (vacancyId == null || vacancyId < 0)
+            throw new IllegalArgumentException("vacancyId can't be null or less than 0");
+        return vacancyRepository.findByIdAndDeletedIsNull(vacancyId).orElseThrow(
+                () -> new ResourceNotFoundException("Vacancy not found by id: " + vacancyId));
+    }
+
+    @Override
+    public boolean isExist(Long vacancyId) {
+        if (vacancyId == null || vacancyId < 0)
+            throw new IllegalArgumentException("vacancy id can't be null or less than 0");
+        return vacancyRepository.existsById(vacancyId);
     }
 
     private PageRequest createPageRequestBy(String sortBy, String order, int page, int size) {

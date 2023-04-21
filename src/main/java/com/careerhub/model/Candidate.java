@@ -1,12 +1,13 @@
 package com.careerhub.model;
 
 import jakarta.persistence.*;
+
 import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Table(name = "user_details")
-public class UserDetails extends TimestampedEntity {
+@Table(name = "candidates")
+public class Candidate extends TimestampedEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -23,18 +24,18 @@ public class UserDetails extends TimestampedEntity {
     @Column(name = "phone", nullable = false)
     private String phoneNumber;
 
-    @OneToMany(mappedBy = "userDetails")
+    @OneToMany(mappedBy = "candidate")
     private List<Resume> resumes;
 
-    @OneToMany(mappedBy = "userDetails")
+    @OneToMany(mappedBy = "candidate")
     private List<Application> applications;
 
-    public UserDetails() {
+    public Candidate() {
     }
 
     @Override
     public String toString() {
-        return "UserDetails{" +
+        return "Candidate{" +
                 "id=" + id +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
@@ -42,14 +43,14 @@ public class UserDetails extends TimestampedEntity {
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", resumes=" + resumes +
                 ", applications=" + applications +
-                "} " + super.toString();
+                '}';
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        UserDetails that = (UserDetails) o;
+        Candidate that = (Candidate) o;
         return getId() == that.getId() && getFirstName().equals(that.getFirstName()) && getLastName().equals(that.getLastName()) && getEmail().equals(that.getEmail()) && Objects.equals(getPhoneNumber(), that.getPhoneNumber()) && Objects.equals(getResumes(), that.getResumes()) && Objects.equals(getApplications(), that.getApplications());
     }
 

@@ -2,6 +2,7 @@ package com.careerhub.controller;
 
 import com.careerhub.dto.ResumeCreateDTO;
 import com.careerhub.dto.ResumeDTO;
+import com.careerhub.dto.ResumeUpdateDTO;
 import com.careerhub.model.Resume;
 import com.careerhub.service.ResumeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,16 +26,16 @@ public class ResumeController {
 
     @PostMapping("/upload")
     public ResponseEntity<Long> uploadResume(@RequestParam("file") MultipartFile file,
-                                             @RequestParam("userDetailsId") Long userDetailsId) throws IOException {
+                                             @RequestParam("candidateId") Long candidateId) throws IOException {
 
-        Long resumeIdResponse = resumeService.upload(file, userDetailsId);
+        Long resumeIdResponse = resumeService.upload(file, candidateId);
         return ResponseEntity.ok(resumeIdResponse);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<ResumeDTO> updateResume(@PathVariable("id") Long id,
-                                                  @RequestBody ResumeCreateDTO resumeCreateDTO) {
-        ResumeDTO resumeDTO = resumeService.update(id, resumeCreateDTO);
+                                                  @RequestBody ResumeUpdateDTO resumeUpdateDTO) {
+        ResumeDTO resumeDTO = resumeService.update(id, resumeUpdateDTO);
         return ResponseEntity.ok(resumeDTO);
     }
 
@@ -44,16 +45,16 @@ public class ResumeController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/user-details/{userDetailsId}")
+    @GetMapping("/candidate/{candidateId}")
     ResponseEntity<List<ResumeDTO>> getResumeList(
-            @PathVariable("userDetailsId") Long userDetailsId
+            @PathVariable("candidateId") Long candidateId
     ) {
-        List<ResumeDTO> resumeDTOList = resumeService.getResumeList(userDetailsId);
+        List<ResumeDTO> resumeDTOList = resumeService.getResumeList(candidateId);
         return ResponseEntity.ok(resumeDTOList);
     }
 
     @GetMapping("/{id}/download")
-    public ResponseEntity<Resource> downloadResume(@PathVariable long id) {
+    public ResponseEntity<Resource> downloadResume(@PathVariable Long id) {
         Resume resume = resumeService.getResumeById(id);
         ByteArrayResource resource = new ByteArrayResource(resume.getFileData());
         return ResponseEntity.ok()

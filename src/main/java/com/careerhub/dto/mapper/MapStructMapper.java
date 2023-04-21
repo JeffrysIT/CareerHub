@@ -3,7 +3,7 @@ package com.careerhub.dto.mapper;
 import com.careerhub.dto.*;
 import com.careerhub.model.Application;
 import com.careerhub.model.Resume;
-import com.careerhub.model.UserDetails;
+import com.careerhub.model.Candidate;
 import com.careerhub.model.Vacancy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -13,19 +13,19 @@ public interface MapStructMapper {
 
     @Mapping(target = "vacancy", source = "vacancyId")
     @Mapping(target = "resume", source = "resumeId")
-    @Mapping(target = "userDetails", source = "userDetailsId")
+    @Mapping(target = "candidate", source = "candidateId")
     Application mapToApplicationEntity(ApplicationCreateDTO applicationCreateDTO);
 
-    UserDetails mapToUserDetailsEntity(UserDetailsCreateDTO userDetailsCreateDTO);
+    Candidate mapToCandidateEntity(CandidateCreateDTO candidateCreateDTO);
 
     Vacancy mapToVacancyEntity(VacancyCreateDTO vacancyCreateDTO);
 
     @Mapping(source = "resume.id", target = "resumeId")
-    @Mapping(source = "userDetails.id", target = "userDetailsId")
+    @Mapping(source = "candidate.id", target = "candidateId")
     @Mapping(source = "vacancy.id", target = "vacancyId")
     ApplicationDTO mapToApplicationDTO(Application savedApplication);
 
-    UserDetailsDTO mapToUserDetailsDTO(UserDetails userDetails);
+    CandidateDTO mapToCandidateDTO(Candidate candidate);
 
     VacancyDTO mapToVacancyDTO(Vacancy vacancy);
 
@@ -37,8 +37,8 @@ public interface MapStructMapper {
         return resume != null ? resume.getId() : null;
     }
 
-    default Long mapUserDetailsToLong(UserDetails userDetails) {
-        return userDetails != null ? userDetails.getId() : null;
+    default Long mapCandidateToLong(Candidate candidate) {
+        return candidate != null ? candidate.getId() : null;
     }
 
 }

@@ -23,7 +23,7 @@ public class VacancyController {
         return ResponseEntity.ok(vacancyDTO);
     }
 
-    @PutMapping("/{vacancyId}/apply/{userId}")
+    @PutMapping("/{vacancyId}/apply/{applicationId}")
     public ResponseEntity<VacancyDTO> applyApplicationToVacancy(
             @PathVariable("vacancyId") Long vacancyId,
             @PathVariable("applicationId") Long applicationId

@@ -21,7 +21,7 @@ public interface ApplicationService {
 
     Page<ApplicationDTO> getApplications(Long vacancyId, String sort, String order, String statusPresent, int page, int size);
 
-    Page<ApplicationDTO> getApplicationsByUserDetailsId(Long userDetailsId);
+    Page<ApplicationDTO> getApplicationsByCandidate(Long candidateId);
 
     Application findApplication(Long applicationId);
 

@@ -12,8 +12,8 @@ public class ResumeDTO {
     @JsonProperty("file_name")
     private String fileName;
 
-    @JsonProperty("user_details_id")
-    private Long userDetailsId;
+    @JsonProperty("candidate_id")
+    private Long candidateId;
 
     @JsonProperty("last_used")
     private LocalDateTime lastUsed;
@@ -40,12 +40,12 @@ public class ResumeDTO {
         this.fileName = fileName;
     }
 
-    public Long getUserDetailsId() {
-        return userDetailsId;
+    public Long getCandidateId() {
+        return candidateId;
     }
 
-    public void setUserDetailsId(Long userDetailsId) {
-        this.userDetailsId = userDetailsId;
+    public void setCandidateId(Long candidateId) {
+        this.candidateId = candidateId;
     }
 
     public LocalDateTime getLastUsed() {

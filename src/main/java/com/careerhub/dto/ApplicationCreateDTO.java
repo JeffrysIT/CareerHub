@@ -4,16 +4,16 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ApplicationCreateDTO {
 
-    @JsonProperty("coverLetter")
+    @JsonProperty("cover_letter")
     private String coverLetter;
 
-    @JsonProperty("resumeId")
+    @JsonProperty("resume_id")
     private Long resumeId;
 
-    @JsonProperty("userDetailsId")
-    private Long userDetailsId;
+    @JsonProperty("candidate_id")
+    private Long candidateId;
 
-    @JsonProperty("vacancyId")
+    @JsonProperty("vacancy_id")
     private Long vacancyId;
 
     public String getCoverLetter() {
@@ -24,8 +24,8 @@ public class ApplicationCreateDTO {
         return resumeId;
     }
 
-    public Long getUserDetailsId() {
-        return userDetailsId;
+    public Long getCandidateId() {
+        return candidateId;
     }
 
     public Long getVacancyId() {

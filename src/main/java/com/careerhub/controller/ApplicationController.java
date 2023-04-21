@@ -56,10 +56,10 @@ public class ApplicationController {
         return ResponseEntity.status(HttpStatus.CREATED).body(applicationDTO);
     }
 
-    @GetMapping("/user-details/{userDetailsId}")
-    public ResponseEntity<Page<ApplicationDTO>> getAllUserDetailsApplications(
-            @RequestParam("userDetailsId") Long userDetailsId) {
-        Page<ApplicationDTO> applicationResponseDTOPage = applicationService.getApplicationsByUserDetailsId(userDetailsId);
+    @GetMapping("/candidate/{candidateId}")
+    public ResponseEntity<Page<ApplicationDTO>> getAllCandidateApplications(
+            @RequestParam("candidateId") Long candidateId) {
+        Page<ApplicationDTO> applicationResponseDTOPage = applicationService.getApplicationsByCandidate(candidateId);
         return ResponseEntity.ok(applicationResponseDTOPage);
     }
 

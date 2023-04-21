@@ -10,8 +10,8 @@ public class ResumeCreateDTO {
     @JsonProperty("file_data")
     private byte[] fileData;
 
-    @JsonProperty("user_details_id")
-    private Long userDetailsId;
+    @JsonProperty("candidate_id")
+    private Long candidateId;
 
 
     public String getFileName() {
@@ -22,7 +22,7 @@ public class ResumeCreateDTO {
         return fileData;
     }
 
-    public Long getUserDetailsId() {
-        return userDetailsId;
+    public Long getCandidateId() {
+        return candidateId;
     }
 }

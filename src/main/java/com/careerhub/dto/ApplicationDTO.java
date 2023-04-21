@@ -10,19 +10,19 @@ public class ApplicationDTO {
     @JsonProperty("id")
     private Long id;
 
-    @JsonProperty("coverLetter")
+    @JsonProperty("cover_letter")
     private String coverLetter;
 
     @JsonProperty("status")
     private ApplicationStatus status;
 
-    @JsonProperty("resumeId")
+    @JsonProperty("resume_id")
     private Long resumeId;
 
-    @JsonProperty("userDetailsId")
-    private Long userDetailsId;
+    @JsonProperty("candidate_id")
+    private Long candidateId;
 
-    @JsonProperty("vacancyId")
+    @JsonProperty("vacancy_id")
     private Long vacancyId;
 
     @JsonProperty("updated")
@@ -63,12 +63,12 @@ public class ApplicationDTO {
         this.resumeId = resumeId;
     }
 
-    public Long getUserDetailsId() {
-        return userDetailsId;
+    public Long getCandidateId() {
+        return candidateId;
     }
 
-    public void setUserDetailsId(Long userDetailsId) {
-        this.userDetailsId = userDetailsId;
+    public void setCandidateId(Long candidateId) {
+        this.candidateId = candidateId;
     }
 
     public Long getVacancyId() {

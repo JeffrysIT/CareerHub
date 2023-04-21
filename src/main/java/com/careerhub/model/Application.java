@@ -23,8 +23,8 @@ public class Application extends TimestampedEntity {
     private Resume resume;
 
     @ManyToOne
-    @JoinColumn(name = "user_details_id", nullable = false)
-    private UserDetails userDetails;
+    @JoinColumn(name = "candidate_id", nullable = false)
+    private Candidate candidate;
 
     @ManyToOne
     @JoinColumn(name = "vacancy_id")
@@ -36,14 +36,14 @@ public class Application extends TimestampedEntity {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Application)) return false;
         Application that = (Application) o;
-        return getId().equals(that.getId()) && Objects.equals(getCoverLetter(), that.getCoverLetter()) && getStatus() == that.getStatus() && Objects.equals(getResume(), that.getResume()) && Objects.equals(getUserDetails(), that.getUserDetails()) && Objects.equals(getVacancy(), that.getVacancy());
+        return getId().equals(that.getId()) && Objects.equals(getCoverLetter(), that.getCoverLetter()) && getStatus() == that.getStatus() && Objects.equals(getResume(), that.getResume()) && Objects.equals(getCandidate(), that.getCandidate()) && Objects.equals(getVacancy(), that.getVacancy());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getCoverLetter(), getStatus(), getResume(), getUserDetails(), getVacancy());
+        return Objects.hash(getId(), getCoverLetter(), getStatus(), getResume(), getCandidate(), getVacancy());
     }
 
     public Long getId() {
@@ -70,20 +70,20 @@ public class Application extends TimestampedEntity {
         this.status = status;
     }
 
+    public Candidate getCandidate() {
+        return candidate;
+    }
+
+    public void setCandidate(Candidate candidate) {
+        this.candidate = candidate;
+    }
+
     public Resume getResume() {
         return resume;
     }
 
     public void setResume(Resume resume) {
         this.resume = resume;
-    }
-
-    public UserDetails getUserDetails() {
-        return userDetails;
-    }
-
-    public void setUserDetails(UserDetails userDetails) {
-        this.userDetails = userDetails;
     }
 
     public Vacancy getVacancy() {
