@@ -78,13 +78,8 @@ public class ApplicationServiceImpl implements ApplicationService {
     public ApplicationDTO updateApplication(MultipartFile file, Long id, ApplicationUpdateDTO applicationUpdateDTO) {
         Application existingApplication = findApplication(id);
 
-        Long resumeId;
-        if (file != null) {
-            Long userDetailsId = existingApplication.getUserDetails().getId();
-            resumeId = resumeService.upload(file, userDetailsId);
-        } else {
-            resumeId = applicationUpdateDTO.getResumeId();
-        }
+        Long userDetailsId = existingApplication.getUserDetails().getId();
+        Long resumeId = file != null ? resumeService.upload(file, userDetailsId) : applicationUpdateDTO.getResumeId();
         Resume resume = resumeService.findResume(resumeId);
 
         existingApplication.setCoverLetter(applicationUpdateDTO.getCoverLetter());
@@ -94,7 +89,8 @@ public class ApplicationServiceImpl implements ApplicationService {
         return mapper.mapToApplicationDTO(existingApplication);
     }
 
-    private Application findApplication(Long id) {
+    @Override
+    public Application findApplication(Long id) {
         if (id == null || id < 0) throw new IllegalArgumentException("id can't be null or less than 0");
 
         Application existingApplication = applicationRepository.findByIdAndDeletedIsNull(id);
