@@ -69,4 +69,14 @@ public class ResumeServiceImpl implements ResumeService {
     public List<ResumeDTO> getResumeList(Long userDetailsId) {
         return null;
     }
+
+    @Override
+    public Resume findResume(Long resumeId) {
+        if (resumeId == null) throw new IllegalArgumentException("resumeId can't be null or less than 0");
+        Resume resume = resumeRepository.findByIdAndDeleteIsNull(resumeId);
+        if (resume == null) {
+            throw new ResourceNotFoundException("Resume not found by id: " + resumeId);
+        }
+        return resume;
+    }
 }

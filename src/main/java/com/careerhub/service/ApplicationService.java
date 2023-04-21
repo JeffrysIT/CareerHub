@@ -14,17 +14,16 @@ public interface ApplicationService {
 
     ApplicationDTO updateApplication(Long id, ApplicationUpdateDTO applicationUpdateDTO);
 
+    ApplicationDTO updateApplication(MultipartFile file, Long id, ApplicationUpdateDTO applicationUpdateDTO);
+
     ApplicationDTO getApplication(Long id);
 
     Page<ApplicationDTO> getApplications(Long vacancyId, String sort, String order, String statusPresent, int page, int size);
 
-    Page<ApplicationDTO> getApplicationByUserDetailsId(Long userDetailsId);
+    Page<ApplicationDTO> getApplicationsByUserDetailsId(Long userDetailsId);
 
     void deleteApplication(Long id);
 
-    void changeStatusToRejected(Long id);
+    void changeStatus(Long id, String status);
 
-    void changeStatusToAccepted(Long id);
-
-    void changeStatusToConsideration(Long id);
 }

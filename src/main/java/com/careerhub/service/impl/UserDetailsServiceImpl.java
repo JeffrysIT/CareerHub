@@ -4,6 +4,7 @@ import com.careerhub.dto.UserDetailsCreateDTO;
 import com.careerhub.dto.mapper.MapStructMapper;
 import com.careerhub.exception.ResourceNotFoundException;
 import com.careerhub.model.UserDetails;
+import com.careerhub.model.Vacancy;
 import com.careerhub.repository.UserDetailsRepository;
 import com.careerhub.service.UserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,5 +46,15 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 .orElseThrow(() -> new ResourceNotFoundException("UserDetails not found with id: " + id));
 
         return userDetailsRepository.save(existingUser);
+    }
+
+    @Override
+    public UserDetails findUserDetails(Long userDetailsId) {
+        if (userDetailsId == null) throw new IllegalArgumentException("userDetailsId can't be null or less than 0");
+        UserDetails userDetails = userDetailsRepository.findByIdAndDeletedIsNull(userDetailsId);
+        if (userDetails == null) {
+            throw new ResourceNotFoundException("User Details not found by id: " + userDetailsId);
+        }
+        return userDetails;
     }
 }

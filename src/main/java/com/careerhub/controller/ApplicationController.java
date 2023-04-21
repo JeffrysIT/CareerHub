@@ -33,6 +33,16 @@ public class ApplicationController {
         return ResponseEntity.ok(applicationDTO);
     }
 
+    @PutMapping("/{id}/upload")
+    public ResponseEntity<ApplicationDTO> updateApplicationWithUploadResume(
+            @RequestParam("file") MultipartFile file,
+            @PathVariable Long id,
+            @RequestBody ApplicationUpdateDTO applicationUpdateDTO
+    ) {
+        ApplicationDTO applicationDTO = applicationService.updateApplication(file, id, applicationUpdateDTO);
+        return ResponseEntity.ok(applicationDTO);
+    }
+
     @PostMapping
     public ResponseEntity<ApplicationDTO> createApplication(@RequestBody ApplicationCreateDTO applicationCreateDTO) {
         ApplicationDTO applicationDTO = applicationService.createApplication(applicationCreateDTO);
@@ -49,7 +59,7 @@ public class ApplicationController {
     @GetMapping("/user-details/{userDetailsId}")
     public ResponseEntity<Page<ApplicationDTO>> getAllUserDetailsApplications(
             @RequestParam("userDetailsId") Long userDetailsId) {
-        Page<ApplicationDTO> applicationResponseDTOPage = applicationService.getApplicationByUserDetailsId(userDetailsId);
+        Page<ApplicationDTO> applicationResponseDTOPage = applicationService.getApplicationsByUserDetailsId(userDetailsId);
         return ResponseEntity.ok(applicationResponseDTOPage);
     }
 
@@ -59,22 +69,9 @@ public class ApplicationController {
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping("/{id}/status/reject")
-    public ResponseEntity<Void> toRejectApplication(@PathVariable Long id) {
-        applicationService.changeStatusToRejected(id);
-        return ResponseEntity.ok().build();
-
-    }
-
-    @PatchMapping("/{id}/status/accept")
-    public ResponseEntity<Void> toAcceptApplication(@PathVariable Long id) {
-        applicationService.changeStatusToAccepted(id);
-        return ResponseEntity.ok().build();
-    }
-
-    @PatchMapping("{id}/status/consideration")
-    public ResponseEntity<Void> toConsiderationApplication(@PathVariable Long id) {
-        applicationService.changeStatusToConsideration(id);
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<Void> changeApplicationStatus(@PathVariable Long id, @RequestBody String status) {
+        applicationService.changeStatus(id, status);
         return ResponseEntity.ok().build();
     }
 

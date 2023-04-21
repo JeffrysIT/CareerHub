@@ -17,4 +17,6 @@ public interface ResumeService {
     void delete(Long id);
 
     List<ResumeDTO> getResumeList(Long userDetailsId);
+
+    Resume findResume(Long resumeId);
 }

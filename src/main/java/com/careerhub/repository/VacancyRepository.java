@@ -7,9 +7,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface VacancyRepository extends CrudRepository<Vacancy, Long> {
-    Vacancy findByIdAndDeletedIsNull(Long id);
+    Optional<Vacancy> findByIdAndDeletedIsNull(Long id);
 
     Page<Vacancy> findAllAndDeletedIsNull(Pageable pageable);
 

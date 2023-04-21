@@ -2,19 +2,15 @@ package com.careerhub.service.impl;
 
 import com.careerhub.dto.ApplicationCreateDTO;
 import com.careerhub.dto.ApplicationDTO;
+import com.careerhub.dto.ApplicationUpdateDTO;
 import com.careerhub.dto.mapper.MapStructMapper;
-import com.careerhub.exception.ResourceAlreadyExistException;
 import com.careerhub.exception.ResourceNotFoundException;
-import com.careerhub.model.Application;
-import com.careerhub.model.ApplicationStatus;
-import com.careerhub.model.Resume;
-import com.careerhub.model.UserDetails;
+import com.careerhub.model.*;
 import com.careerhub.repository.ApplicationRepository;
-import com.careerhub.repository.ResumeRepository;
-import com.careerhub.repository.UserDetailsRepository;
 import com.careerhub.service.ApplicationService;
 import com.careerhub.service.ResumeService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.careerhub.service.UserDetailsService;
+import com.careerhub.service.VacancyService;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,151 +22,156 @@ import java.time.LocalDateTime;
 public class ApplicationServiceImpl implements ApplicationService {
 
     private final ResumeService resumeService;
-
-    private final UserDetailsRepository userDetailsRepository;
+    private final VacancyService vacancyService;
+    private final UserDetailsService userDetailsService;
     private final ApplicationRepository applicationRepository;
-    private final ResumeRepository resumeRepository;
-
     private final MapStructMapper mapper;
 
-    @Autowired
     public ApplicationServiceImpl(
             ApplicationRepository applicationRepository,
             ResumeService resumeService,
-            ResumeRepository resumeRepository,
-            UserDetailsRepository userDetailsRepository,
-            MapStructMapper mapper) {
+            VacancyService vacancyService,
+            UserDetailsService userDetailsService,
+            MapStructMapper mapper
+    ) {
         this.applicationRepository = applicationRepository;
         this.resumeService = resumeService;
-        this.resumeRepository = resumeRepository;
-        this.userDetailsRepository = userDetailsRepository;
+        this.vacancyService = vacancyService;
+        this.userDetailsService = userDetailsService;
         this.mapper = mapper;
     }
 
     @Override
     public ApplicationDTO createApplication(ApplicationCreateDTO applicationCreateDTO) {
-        Application application = mapper.applicationCreateDTOtoApplication(applicationCreateDTO);
-        if (applicationRepository.existsById(application.getId())) {
-            throw new ResourceAlreadyExistException("Application with id: " + application.getId() + " already exist");
-        }
-
-        application.setCreated(LocalDateTime.now());
-        application.setStatus(ApplicationStatus.CONSIDERATION);
-
-        Application savedApplication = applicationRepository.save(application);
-        return mapper.applicationToApplicationDTO(savedApplication);
+        return createApplication(null, applicationCreateDTO);
     }
 
     @Override
     @Transactional
     public ApplicationDTO createApplication(MultipartFile file, ApplicationCreateDTO applicationCreateDTO) {
-
-        Application application = mapper.applicationCreateDTOtoApplication(applicationCreateDTO);
-        Long applicationId = application.getId();
-        if (applicationRepository.existsById(applicationId)) {
-            throw new ResourceAlreadyExistException("Application with id: " + applicationId + " already exist");
-        }
-
-
         Long userDetailsId = applicationCreateDTO.getUserDetailsId();
-        UserDetails userDetails = userDetailsRepository.findByIdAndDeletedIsNull(userDetailsId);
-        if (userDetails == null || userDetails.getDeleted() != null) {
-            throw new ResourceNotFoundException("User Details not found by id: " + userDetailsId);
-        }
+        UserDetails userDetails = userDetailsService.findUserDetails(userDetailsId);
 
+        Long vacancyId = applicationCreateDTO.getVacancyId();
+        Vacancy vacancy = vacancyService.findVacancy(vacancyId);
 
-        Long resumeId = resumeService.upload(file, userDetailsId);
-        Resume resume = resumeRepository.findById(resumeId).orElseThrow(
-                () -> new ResourceNotFoundException("Resume not found by id: " + resumeId));
+        Long resumeId = file != null ? resumeService.upload(file, userDetailsId) : applicationCreateDTO.getResumeId();
+        Resume resume = resumeService.findResume(resumeId);
 
-        application.setUserDetails(userDetails);
+        Application application = mapper.mapToEntity(applicationCreateDTO);
         application.setResume(resume);
+        application.setUserDetails(userDetails);
+        application.setVacancy(vacancy);
         application.setCreated(LocalDateTime.now());
         application.setStatus(ApplicationStatus.CONSIDERATION);
 
         Application savedApplication = applicationRepository.save(application);
-        return mapper.applicationToApplicationDTO(savedApplication);
+        return mapper.mapToDto(savedApplication);
     }
 
     @Override
-    public ApplicationResponseDTO updateApplication(Long id, ApplicationRequestDTO applicationRequestDTO) {
+    public ApplicationDTO updateApplication(Long id, ApplicationUpdateDTO applicationUpdateDTO) {
+        return updateApplication(null, id, applicationUpdateDTO);
+    }
+
+    @Override
+    public ApplicationDTO updateApplication(MultipartFile file, Long id, ApplicationUpdateDTO applicationUpdateDTO) {
+        Application existingApplication = findApplication(id);
+
+        Long resumeId;
+        if (file != null) {
+            Long userDetailsId = existingApplication.getUserDetails().getId();
+            resumeId = resumeService.upload(file, userDetailsId);
+        } else {
+            resumeId = applicationUpdateDTO.getResumeId();
+        }
+        Resume resume = resumeService.findResume(resumeId);
+
+        existingApplication.setCoverLetter(applicationUpdateDTO.getCoverLetter());
+        existingApplication.setResume(resume);
+        existingApplication.setUpdated(LocalDateTime.now());
+
+        return mapper.mapToDto(existingApplication);
+    }
+
+    private Application findApplication(Long id) {
+        if (id == null || id < 0) throw new IllegalArgumentException("id can't be null or less than 0");
 
         Application existingApplication = applicationRepository.findByIdAndDeletedIsNull(id);
         if (existingApplication == null || existingApplication.getDeleted() != null) {
             throw new ResourceNotFoundException("Application not found by provided id: " + id);
         }
 
-        Long resumeId = applicationRequestDTO.getResumeId();
-        Resume resume = resumeRepository.findById(resumeId)
-                .orElseThrow(() -> new ResourceNotFoundException("Resume not found by id: " + resumeId));
-
-        existingApplication.setCoverLetter(applicationRequestDTO.getCoverLetter());
-        existingApplication.setResume(resume);
-        existingApplication.setUpdated(LocalDateTime.now());
-
-        return mapper.applicationToApplicationResponseDTO(existingApplication);
+        return existingApplication;
     }
 
     @Override
     public void deleteApplication(Long id) {
-        Application existingApplication = applicationRepository.findByIdAndDeletedIsNull(id);
-        if (existingApplication == null || existingApplication.getDeleted() != null) {
-            throw new ResourceNotFoundException("Application not found by provided id: " + id);
-        }
+        Application existingApplication = findApplication(id);
         existingApplication.setDeleted(LocalDateTime.now());
         applicationRepository.save(existingApplication);
     }
 
     @Override
     public ApplicationDTO getApplication(Long id) {
-        Application existingApplication = applicationRepository.findByIdAndDeletedIsNull(id);
-        if (existingApplication == null || existingApplication.getDeleted() != null) {
-            throw new ResourceNotFoundException("Application not found by provided id: " + id);
-        }
-        return mapper.applicationToApplicationResponseDTO(existingApplication);
+        Application existingApplication = findApplication(id);
+        return mapper.mapToDto(existingApplication);
     }
 
     @Override
-    public void changeStatusToRejected(Long id) {
-        Application existingApplication = applicationRepository.findByIdAndDeletedIsNull(id);
-        if (existingApplication == null || existingApplication.getDeleted() != null) {
-            throw new ResourceNotFoundException("Application not found by provided id: " + id);
-        }
-        existingApplication.setStatus(ApplicationStatus.REJECTED);
-        existingApplication.setUpdated(LocalDateTime.now());
-        applicationRepository.save(existingApplication);
+    public Page<ApplicationDTO> getApplications(Long vacancyId, String sort, String order, String statusPresent, int page, int size) {
+        throw new ResourceNotFoundException("not implemented");
     }
 
     @Override
-    public void changeStatusToAccepted(Long id) {
-        Application existingApplication = applicationRepository.findByIdAndDeletedIsNull(id);
-        if (existingApplication == null || existingApplication.getDeleted() != null) {
-            throw new ResourceNotFoundException("Application not found by provided id: " + id);
+    public Page<ApplicationDTO> getApplicationsByUserDetailsId(Long userDetailsId) {
+        throw new ResourceNotFoundException("not implemented");
+    }
+
+    @Override
+    public void changeStatus(Long id, String status) {
+        ApplicationStatus applicationStatus = mapStatus(status);
+        switch (applicationStatus) {
+            case ACCEPTED:
+                changeStatusToAccepted(id);
+                break;
+            case REJECTED:
+                changeStatusToRejected(id);
+                break;
+            case CONSIDERATION:
+                changeStatusToConsideration(id);
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid status: " + status);
         }
+    }
+
+    private ApplicationStatus mapStatus(String status) {
+        try {
+            return ApplicationStatus.valueOf(status.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid status: " + status);
+        }
+    }
+
+    private void changeStatusToAccepted(Long id) {
+        Application existingApplication = findApplication(id);
         existingApplication.setStatus(ApplicationStatus.ACCEPTED);
         existingApplication.setUpdated(LocalDateTime.now());
         applicationRepository.save(existingApplication);
     }
 
-    @Override
-    public void changeStatusToConsideration(Long id) {
-        Application existingApplication = applicationRepository.findByIdAndDeletedIsNull(id);
-        if (existingApplication == null || existingApplication.getDeleted() != null) {
-            throw new ResourceNotFoundException("Application not found by provided id: " + id);
-        }
+    private void changeStatusToRejected(Long id) {
+        Application existingApplication = findApplication(id);
+        existingApplication.setStatus(ApplicationStatus.REJECTED);
+        existingApplication.setUpdated(LocalDateTime.now());
+        applicationRepository.save(existingApplication);
+    }
+
+    private void changeStatusToConsideration(Long id) {
+        Application existingApplication = findApplication(id);
         existingApplication.setStatus(ApplicationStatus.CONSIDERATION);
         existingApplication.setUpdated(LocalDateTime.now());
         applicationRepository.save(existingApplication);
-
-    }
-
-    @Override
-    public Page<ApplicationDTO> getApplications(Long vacancyId, String sort, String order, String statusPresent, int page, int size) {
-        return null;
-    }
-
-    @Override
-    public Page<ApplicationDTO> getApplicationByUserDetailsId(Long userDetailsId) {
-        return null;
     }
 }

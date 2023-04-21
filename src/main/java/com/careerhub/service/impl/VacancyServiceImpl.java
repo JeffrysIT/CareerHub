@@ -30,7 +30,7 @@ public class VacancyServiceImpl implements VacancyService {
 
     private final List<String> SORT_FIELDS =
             List.of("created", "updated", "title", "location", "viewed", "applied");
-    private final int MAX_QUERY_LEN = 1000;
+    public final static int MAX_QUERY_LEN = 1000;
 
 
     @Autowired
@@ -79,6 +79,11 @@ public class VacancyServiceImpl implements VacancyService {
         return mapper.vacancyToVacancyResponseDTO(vacancyResult);
     }
 
+    private void refreshApplied(Vacancy vacancy) {
+        int applied = vacancy.getApplications().size();
+        vacancy.setApplied(applied);
+    }
+
     @Override
     public void deleteVacancy(Long id) {
         Vacancy existingVacancy = vacancyRepository.findById(id).orElseThrow(()
@@ -92,12 +97,14 @@ public class VacancyServiceImpl implements VacancyService {
 
     @Override
     public VacancyDTO getVacancyById(Long id) {
-        Vacancy existingVacancy = vacancyRepository.findByIdAndDeletedIsNull(id);
-        if (existingVacancy == null || existingVacancy.getDeleted() != null) {
-            throw new ResourceNotFoundException("Vacancy not found by provided id: " + id);
-        }
+        Vacancy existingVacancy = findVacancy(id);
         increaseView(existingVacancy);
         return mapper.vacancyToVacancyResponseDTO(existingVacancy);
+    }
+
+    private void increaseView(Vacancy vacancy) {
+        int view = vacancy.getViewed();
+        vacancy.setViewed(++view);
     }
 
     @Override
@@ -149,20 +156,20 @@ public class VacancyServiceImpl implements VacancyService {
             throw new IllegalArgumentException("invalid size");
     }
 
+    @Override
+    public Vacancy findVacancy(Long vacancyId) {
+        if (vacancyId == null) throw new IllegalArgumentException("vacancyId can't be null or less than 0");
+        Vacancy vacancy = vacancyRepository.findByIdAndDeletedIsNull(vacancyId);
+        if (vacancy == null) {
+            throw new ResourceNotFoundException("Vacancy not found by id: " + vacancyId);
+        }
+        return vacancy;
+    }
+
     private PageRequest createPageRequestBy(String sortBy, String order, int page, int size) {
         Sort.Direction orderBy = order.equalsIgnoreCase("ASC") ? Sort.Direction.ASC : Sort.Direction.DESC;
         Sort sort = Sort.by(orderBy, sortBy);
         return PageRequest.of(page, size, sort);
-    }
-
-    private void increaseView(Vacancy vacancy) {
-        int view = vacancy.getViewed();
-        vacancy.setViewed(++view);
-    }
-
-    private void refreshApplied(Vacancy vacancy) {
-        int applied = vacancy.getApplications().size();
-        vacancy.setApplied(applied);
     }
 
 }

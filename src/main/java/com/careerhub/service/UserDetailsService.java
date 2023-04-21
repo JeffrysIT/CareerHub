@@ -13,4 +13,6 @@ public interface UserDetailsService {
 
     UserDetails updateUserDetails(Long id, UserDetailsCreateDTO userDetailsCreateDTO);
 
+    UserDetails findUserDetails(Long userDetailsId);
+
 }
