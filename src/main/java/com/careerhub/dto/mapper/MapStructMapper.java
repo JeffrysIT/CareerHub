@@ -1,7 +1,6 @@
 package com.careerhub.dto.mapper;
 
-import com.careerhub.dto.ApplicationCreateDTO;
-import com.careerhub.dto.ApplicationDTO;
+import com.careerhub.dto.*;
 import com.careerhub.model.Application;
 import com.careerhub.model.Resume;
 import com.careerhub.model.UserDetails;
@@ -15,12 +14,20 @@ public interface MapStructMapper {
     @Mapping(target = "vacancy", source = "vacancyId")
     @Mapping(target = "resume", source = "resumeId")
     @Mapping(target = "userDetails", source = "userDetailsId")
-    Application mapToEntity(ApplicationCreateDTO applicationCreateDTO);
+    Application mapToApplicationEntity(ApplicationCreateDTO applicationCreateDTO);
+
+    UserDetails mapToUserDetailsEntity(UserDetailsCreateDTO userDetailsCreateDTO);
+
+    Vacancy mapToVacancyEntity(VacancyCreateDTO vacancyCreateDTO);
 
     @Mapping(source = "resume.id", target = "resumeId")
     @Mapping(source = "userDetails.id", target = "userDetailsId")
     @Mapping(source = "vacancy.id", target = "vacancyId")
-    ApplicationDTO mapToDto(Application savedApplication);
+    ApplicationDTO mapToApplicationDTO(Application savedApplication);
+
+    UserDetailsDTO mapToUserDetailsDTO(UserDetails userDetails);
+
+    VacancyDTO mapToVacancyDTO(Vacancy vacancy);
 
     default Long mapVacancyToLong(Vacancy vacancy) {
         return vacancy != null ? vacancy.getId() : null;

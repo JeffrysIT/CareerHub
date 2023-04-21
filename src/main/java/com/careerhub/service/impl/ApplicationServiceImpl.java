@@ -58,7 +58,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         Long resumeId = file != null ? resumeService.upload(file, userDetailsId) : applicationCreateDTO.getResumeId();
         Resume resume = resumeService.findResume(resumeId);
 
-        Application application = mapper.mapToEntity(applicationCreateDTO);
+        Application application = mapper.mapToApplicationEntity(applicationCreateDTO);
         application.setResume(resume);
         application.setUserDetails(userDetails);
         application.setVacancy(vacancy);
@@ -66,7 +66,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         application.setStatus(ApplicationStatus.CONSIDERATION);
 
         Application savedApplication = applicationRepository.save(application);
-        return mapper.mapToDto(savedApplication);
+        return mapper.mapToApplicationDTO(savedApplication);
     }
 
     @Override
@@ -91,7 +91,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         existingApplication.setResume(resume);
         existingApplication.setUpdated(LocalDateTime.now());
 
-        return mapper.mapToDto(existingApplication);
+        return mapper.mapToApplicationDTO(existingApplication);
     }
 
     private Application findApplication(Long id) {
@@ -115,7 +115,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     public ApplicationDTO getApplication(Long id) {
         Application existingApplication = findApplication(id);
-        return mapper.mapToDto(existingApplication);
+        return mapper.mapToApplicationDTO(existingApplication);
     }
 
     @Override
