@@ -27,9 +27,14 @@ public class ResumeController {
     @PostMapping("/upload")
     public ResponseEntity<Long> uploadResume(@RequestParam("file") MultipartFile file,
                                              @RequestParam("candidateId") Long candidateId) throws IOException {
-
         Long resumeIdResponse = resumeService.upload(file, candidateId);
         return ResponseEntity.ok(resumeIdResponse);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ResumeDTO> getResume(@PathVariable("id") Long id) {
+        ResumeDTO resumeDTO = resumeService.getResumeById(id);
+        return ResponseEntity.ok(resumeDTO);
     }
 
     @PutMapping("/{id}")
@@ -55,7 +60,7 @@ public class ResumeController {
 
     @GetMapping("/{id}/download")
     public ResponseEntity<Resource> downloadResume(@PathVariable Long id) {
-        Resume resume = resumeService.getResumeById(id);
+        Resume resume = resumeService.findResume(id);
         ByteArrayResource resource = new ByteArrayResource(resume.getFileData());
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resume.getFileName() + "\"")

@@ -4,7 +4,6 @@ import com.careerhub.dto.VacancyCreateDTO;
 import com.careerhub.dto.VacancyUpdateDTO;
 import com.careerhub.dto.VacancyDTO;
 import com.careerhub.dto.mapper.MapStructMapper;
-import com.careerhub.exception.ResourceAlreadyExistException;
 import com.careerhub.exception.ResourceNotFoundException;
 import com.careerhub.model.Application;
 import com.careerhub.model.Vacancy;
@@ -44,9 +43,6 @@ public class VacancyServiceImpl implements VacancyService {
     @Override
     public VacancyDTO createVacancy(VacancyCreateDTO vacancyDto) {
         Vacancy vacancy = mapper.mapToVacancyEntity(vacancyDto);
-        if (vacancyRepository.existsById(vacancy.getId())) {
-            throw new ResourceAlreadyExistException("Vacancy with id: " + vacancy.getId() + " already exist");
-        }
         vacancy.setCreated(LocalDateTime.now());
         Vacancy vacancyResult = vacancyRepository.save(vacancy);
         return mapper.mapToVacancyDTO(vacancyResult);

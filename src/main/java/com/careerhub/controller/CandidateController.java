@@ -32,7 +32,7 @@ public class CandidateController {
 
     @PostMapping
     public ResponseEntity<CandidateDTO> createCandidate(@RequestBody CandidateCreateDTO candidateCreateDTO) {
-        CandidateDTO createdCandidate = candidateService.saveCandidate(candidateCreateDTO);
+        CandidateDTO createdCandidate = candidateService.createCandidate(candidateCreateDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdCandidate);
     }
 

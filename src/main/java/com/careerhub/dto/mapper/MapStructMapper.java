@@ -29,6 +29,10 @@ public interface MapStructMapper {
 
     VacancyDTO mapToVacancyDTO(Vacancy vacancy);
 
+    ResumeDTO mapToResumeDTO(Resume resume);
+
+    Resume mapToResumeEntity(ResumeCreateDTO resumeCreateDTO);
+
     default Long mapVacancyToLong(Vacancy vacancy) {
         return vacancy != null ? vacancy.getId() : null;
     }

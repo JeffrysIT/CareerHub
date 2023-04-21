@@ -9,7 +9,7 @@ public interface CandidateService {
 
     CandidateDTO getCandidateById(Long id);
 
-    CandidateDTO saveCandidate(CandidateCreateDTO candidateCreateDTO);
+    CandidateDTO createCandidate(CandidateCreateDTO candidateCreateDTO);
 
     void deleteCandidate(Long id);
 
