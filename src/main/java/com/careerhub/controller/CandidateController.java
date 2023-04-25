@@ -17,29 +17,6 @@ public class CandidateController {
     @Autowired
     private CandidateService candidateService;
 
-    @GetMapping("/{id}")
-    public ResponseEntity<CandidateDTO> getCandidate(@PathVariable("id") Long id) {
-        CandidateDTO candidateDTO = candidateService.getCandidateById(id);
-        return ResponseEntity.ok(candidateDTO);
-    }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<CandidateDTO> updateCandidate(@PathVariable("id") Long id,
-                                                        @RequestBody CandidateUpdateDTO candidateUpdateDTO) {
-        CandidateDTO updatedCandidate = candidateService.updateCandidate(id, candidateUpdateDTO);
-        return ResponseEntity.ok(updatedCandidate);
-    }
-
-    @PostMapping
-    public ResponseEntity<CandidateDTO> createCandidate(@RequestBody CandidateCreateDTO candidateCreateDTO) {
-        CandidateDTO createdCandidate = candidateService.createCandidate(candidateCreateDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdCandidate);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCandidate(@PathVariable("id") Long id) {
-        candidateService.deleteCandidate(id);
-        return ResponseEntity.noContent().build();
-    }
 
 }

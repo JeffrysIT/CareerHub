@@ -23,50 +23,7 @@ public class ResumeController {
     @Autowired
     private ResumeService resumeService;
 
-    @PostMapping("/upload")
-    public ResponseEntity<Long> uploadResume(@RequestParam("file") MultipartFile file,
-                                             @RequestParam("candidateId") Long candidateId) throws IOException {
-        Long resumeIdResponse = resumeService.upload(file, candidateId);
-        return ResponseEntity.ok(resumeIdResponse);
-    }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ResumeDTO> getResume(@PathVariable("id") Long id) {
-        ResumeDTO resumeDTO = resumeService.getResumeById(id);
-        return ResponseEntity.ok(resumeDTO);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<ResumeDTO> updateResume(@PathVariable("id") Long id,
-                                                  @RequestBody ResumeUpdateDTO resumeUpdateDTO) {
-        ResumeDTO resumeDTO = resumeService.update(id, resumeUpdateDTO);
-        return ResponseEntity.ok(resumeDTO);
-    }
-
-    @DeleteMapping("/{id}")
-    ResponseEntity<Void> deleteResume(@PathVariable("id") Long id) {
-        resumeService.delete(id);
-        return ResponseEntity.ok().build();
-    }
-
-    @GetMapping("/candidate/{candidateId}")
-    ResponseEntity<List<ResumeDTO>> getResumeList(
-            @PathVariable("candidateId") Long candidateId
-    ) {
-        List<ResumeDTO> resumeDTOList = resumeService.getResumeList(candidateId);
-        return ResponseEntity.ok(resumeDTOList);
-    }
-
-    @GetMapping("/{id}/download")
-    public ResponseEntity<Resource> downloadResume(@PathVariable Long id) {
-        Resume resume = resumeService.findResume(id);
-        ByteArrayResource resource = new ByteArrayResource(resume.getFileData());
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resume.getFileName() + "\"")
-                .contentLength(resume.getFileData().length)
-                .contentType(MediaType.parseMediaType("application/octet-stream"))
-                .body(resource);
-    }
 
 }
 
