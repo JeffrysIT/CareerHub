@@ -16,9 +16,9 @@ public interface VacancyService {
 
     void deleteVacancy(Long id);
 
-    VacancyDTO getVacancyById(Long id);
+    VacancyDTO getVacancyDTOById(Long id);
 
-    Page<VacancyDTO> getVacancies(String sortBy, String order, int page, int size);
+    Page<VacancyDTO> getVacanciesDTO(String sortBy, String order, int page, int size);
 
     Page<VacancyDTO> searchVacancies(String query, String sortBy, String order, int page, int size);
 

@@ -51,17 +51,17 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public ApplicationDTO createApplication(ApplicationCreateDTO applicationCreateDTO) {
-        return createApplication(null, applicationCreateDTO);
+    public ApplicationDTO createApplication(
+            Long vacancyId, Long candidateId, ApplicationCreateDTO applicationCreateDTO) {
+        return createApplication(vacancyId, candidateId, null, applicationCreateDTO);
     }
 
     @Override
     @Transactional
-    public ApplicationDTO createApplication(MultipartFile file, ApplicationCreateDTO applicationCreateDTO) {
-        Long candidateId = applicationCreateDTO.getCandidateId();
+    public ApplicationDTO createApplication(
+            Long vacancyId, Long candidateId, MultipartFile file, ApplicationCreateDTO applicationCreateDTO) {
         Candidate candidate = candidateService.findCandidate(candidateId);
 
-        Long vacancyId = applicationCreateDTO.getVacancyId();
         Vacancy vacancy = vacancyService.findVacancy(vacancyId);
 
         Long resumeId = file != null ? resumeService.upload(file, candidateId) : applicationCreateDTO.getResumeId();
@@ -79,15 +79,17 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public ApplicationDTO updateApplication(Long id, ApplicationUpdateDTO applicationUpdateDTO) {
-        return updateApplication(null, id, applicationUpdateDTO);
+    public ApplicationDTO updateApplication(
+            Long vacancyId, Long candidateId, Long applicationId, ApplicationUpdateDTO applicationUpdateDTO) {
+        return updateApplication(vacancyId, candidateId, applicationId, null, applicationUpdateDTO);
     }
 
     @Override
-    public ApplicationDTO updateApplication(MultipartFile file, Long id, ApplicationUpdateDTO applicationUpdateDTO) {
-        Application existingApplication = findApplication(id);
+    public ApplicationDTO updateApplication(Long vacancyId, Long candidateId, Long applicationId,
+                                            MultipartFile file, ApplicationUpdateDTO applicationUpdateDTO) {
 
-        Long candidateId = existingApplication.getCandidate().getId();
+        Application existingApplication = findApplication(applicationId);
+
         Long resumeId = file != null ? resumeService.upload(file, candidateId) : applicationUpdateDTO.getResumeId();
         Resume resume = resumeService.findResume(resumeId);
 
@@ -111,7 +113,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public VacancyDTO addApplicationToVacancy(Long applicationId, Long vacancyId) {
+    public VacancyDTO addApplicationToVacancy(Long vacancyId, Long candidateId, Long applicationId) {
         Application application = findApplication(applicationId);
         Vacancy vacancy = vacancyService.findVacancy(vacancyId);
         vacancy.getApplications().add(application);
@@ -121,21 +123,21 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public void deleteApplication(Long id) {
-        Application existingApplication = findApplication(id);
+    public void deleteApplication(Long vacancyId, Long candidateId, Long applicationId) {
+        Application existingApplication = findApplication(vacancyId);
         existingApplication.setDeleted(LocalDateTime.now());
         applicationRepository.save(existingApplication);
     }
 
     @Override
-    public ApplicationDTO getApplication(Long id) {
-        Application existingApplication = findApplication(id);
+    public ApplicationDTO getApplicationDTO(Long vacancyId, Long candidateId, Long applicationId) {
+        Application existingApplication = findApplication(applicationId);
         return mapper.mapToApplicationDTO(existingApplication);
     }
 
     @Override
-    public Page<ApplicationDTO> getApplications(
-            Long vacancyId, String sort, String order, String statusPresent, int page, int size
+    public Page<ApplicationDTO> getApplicationDTOPage(
+            Long vacancyId, String statusPresent, String sort, String order, int page, int size
     ) {
         Vacancy vacancy = vacancyService.findVacancy(vacancyId);
         validateRequestParameters(sort, order, statusPresent, page, size);
@@ -188,17 +190,17 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public void changeStatus(Long id, String status) {
+    public void changeStatus(Long vacancyId, Long candidateId, Long applicationId, String status) {
         ApplicationStatus applicationStatus = mapStatus(status);
         switch (applicationStatus) {
             case ACCEPTED:
-                changeStatusToAccepted(id);
+                changeStatusToAccepted(applicationId);
                 break;
             case REJECTED:
-                changeStatusToRejected(id);
+                changeStatusToRejected(applicationId);
                 break;
             case CONSIDERATION:
-                changeStatusToConsideration(id);
+                changeStatusToConsideration(applicationId);
                 break;
             default:
                 throw new IllegalArgumentException("Invalid status: " + status);

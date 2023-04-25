@@ -4,6 +4,7 @@ import com.careerhub.dto.CandidateCreateDTO;
 import com.careerhub.dto.CandidateDTO;
 import com.careerhub.dto.CandidateUpdateDTO;
 import com.careerhub.model.Candidate;
+import org.springframework.data.domain.Page;
 
 public interface CandidateService {
 
@@ -17,4 +18,5 @@ public interface CandidateService {
 
     Candidate findCandidate(Long candidateId);
 
+    Page<CandidateDTO> getCandidateDTOPage(Long vacancyId);
 }

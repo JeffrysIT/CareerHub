@@ -10,26 +10,26 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface ApplicationService {
 
-    ApplicationDTO createApplication(ApplicationCreateDTO applicationCreateDTO);
+    ApplicationDTO createApplication(Long vacancyId, Long candidateId, ApplicationCreateDTO applicationCreateDTO);
 
-    ApplicationDTO createApplication(MultipartFile file, ApplicationCreateDTO applicationCreateDTO);
+    ApplicationDTO createApplication(Long vacancyId, Long candidateId, MultipartFile file, ApplicationCreateDTO applicationCreateDTO);
 
-    ApplicationDTO updateApplication(Long id, ApplicationUpdateDTO applicationUpdateDTO);
+    ApplicationDTO updateApplication(Long vacancyId, Long candidateId, Long applicationId, ApplicationUpdateDTO applicationUpdateDTO);
 
-    ApplicationDTO updateApplication(MultipartFile file, Long id, ApplicationUpdateDTO applicationUpdateDTO);
+    ApplicationDTO updateApplication(Long vacancyId, Long candidateId, Long applicationId, MultipartFile file, ApplicationUpdateDTO applicationUpdateDTO);
 
-    ApplicationDTO getApplication(Long id);
+    ApplicationDTO getApplicationDTO(Long vacancyId, Long candidateId, Long applicationId);
 
-    Page<ApplicationDTO> getApplications(Long vacancyId, String sort, String order, String statusPresent, int page, int size);
+    Page<ApplicationDTO> getApplicationDTOPage(Long vacancyId, String statusPresent, String sort, String order, int page, int size);
 
     Page<ApplicationDTO> getApplicationsByCandidate(Long candidateId);
 
-    VacancyDTO addApplicationToVacancy(Long applicationId, Long vacancyId);
+    VacancyDTO addApplicationToVacancy(Long vacancyId, Long candidateId, Long applicationId);
 
     Application findApplication(Long applicationId);
 
-    void deleteApplication(Long id);
+    void deleteApplication(Long vacancyId, Long candidateId, Long applicationId);
 
-    void changeStatus(Long id, String status);
+    void changeStatus(Long vacancyId, Long candidateId, Long applicationId, String status);
 
 }

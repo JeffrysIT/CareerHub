@@ -81,7 +81,7 @@ public class VacancyServiceImpl implements VacancyService {
     }
 
     @Override
-    public VacancyDTO getVacancyById(Long id) {
+    public VacancyDTO getVacancyDTOById(Long id) {
         Vacancy existingVacancy = findVacancy(id);
         increaseView(existingVacancy);
         return mapper.mapToVacancyDTO(existingVacancy);
@@ -93,7 +93,7 @@ public class VacancyServiceImpl implements VacancyService {
     }
 
     @Override
-    public Page<VacancyDTO> getVacancies(String sort, String order, int page, int size) {
+    public Page<VacancyDTO> getVacanciesDTO(String sort, String order, int page, int size) {
         validateSearchRequest(null, sort, order, page, size);
         PageRequest pageRequest = createPageRequestBy(sort, order, page, size);
         return vacancyRepository.findByDeletedIsNull(pageRequest)
