@@ -59,7 +59,7 @@ public class ApplicationController {
 
     @GetMapping("/candidate/{candidateId}")
     public ResponseEntity<Page<ApplicationDTO>> getAllCandidateApplications(
-            @RequestParam("candidateId") Long candidateId) {
+            @PathVariable("candidateId") Long candidateId) {
         Page<ApplicationDTO> applicationResponseDTOPage = applicationService.getApplicationsByCandidate(candidateId);
         return ResponseEntity.ok(applicationResponseDTOPage);
     }
