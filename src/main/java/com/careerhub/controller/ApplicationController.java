@@ -3,6 +3,7 @@ package com.careerhub.controller;
 import com.careerhub.dto.ApplicationCreateDTO;
 import com.careerhub.dto.ApplicationDTO;
 import com.careerhub.dto.ApplicationUpdateDTO;
+import com.careerhub.dto.VacancyDTO;
 import com.careerhub.service.ApplicationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -73,6 +74,15 @@ public class ApplicationController {
     public ResponseEntity<Void> changeApplicationStatus(@PathVariable Long id, @RequestBody String status) {
         applicationService.changeStatus(id, status);
         return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/{applicationId}/vacancy/{vacancyId}")
+    public ResponseEntity<VacancyDTO> applyApplicationToVacancy(
+            @PathVariable("applicationId") Long applicationId,
+            @PathVariable("vacancyId") Long vacancyId
+    ) {
+        VacancyDTO vacancy = applicationService.addApplicationToVacancy(vacancyId, applicationId);
+        return ResponseEntity.ok(vacancy);
     }
 
     @GetMapping("/vacancy/{vacancyId}")

@@ -92,7 +92,7 @@ public class ResumeServiceImpl implements ResumeService {
     @Override
     public Resume findResume(Long resumeId) {
         if (resumeId == null) throw new IllegalArgumentException("resumeId can't be null or less than 0");
-        Resume resume = resumeRepository.findByIdAndDeleteIsNull(resumeId);
+        Resume resume = resumeRepository.findByIdAndDeletedIsNull(resumeId);
         if (resume == null) {
             throw new ResourceNotFoundException("Resume not found by id: " + resumeId);
         }

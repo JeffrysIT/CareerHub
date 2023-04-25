@@ -1,6 +1,5 @@
 package com.careerhub.controller;
 
-import com.careerhub.dto.ResumeCreateDTO;
 import com.careerhub.dto.ResumeDTO;
 import com.careerhub.dto.ResumeUpdateDTO;
 import com.careerhub.model.Resume;

@@ -1,11 +1,13 @@
 package com.careerhub.model;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 
 import java.time.LocalDateTime;
 
+@MappedSuperclass
 public class TimestampedEntity {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created", nullable = false)

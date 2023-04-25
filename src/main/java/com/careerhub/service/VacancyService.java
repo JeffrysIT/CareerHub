@@ -12,17 +12,19 @@ public interface VacancyService {
 
     VacancyDTO updateVacancy(Long id, VacancyUpdateDTO vacancyUpdateDTO);
 
+    Vacancy updateVacancy(Vacancy vacancy);
+
     void deleteVacancy(Long id);
 
     VacancyDTO getVacancyById(Long id);
-
-    VacancyDTO addApplicationToVacancy(Long vacancyId, Long applicationId);
 
     Page<VacancyDTO> getVacancies(String sortBy, String order, int page, int size);
 
     Page<VacancyDTO> searchVacancies(String query, String sortBy, String order, int page, int size);
 
     Vacancy findVacancy(Long id);
+
+    void refreshApplied(Vacancy vacancy);
 
     boolean isExist(Long vacancyId);
 

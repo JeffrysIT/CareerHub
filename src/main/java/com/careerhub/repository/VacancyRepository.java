@@ -13,7 +13,7 @@ import java.util.Optional;
 public interface VacancyRepository extends CrudRepository<Vacancy, Long> {
     Optional<Vacancy> findByIdAndDeletedIsNull(Long id);
 
-    Page<Vacancy> findAllAndDeletedIsNull(Pageable pageable);
+    Page<Vacancy> findByDeletedIsNull(Pageable pageable);
 
     Page<Vacancy> searchByTitleContainingIgnoreCaseAndDeletedIsNull(String query, PageRequest pageRequest);
 }

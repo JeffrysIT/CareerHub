@@ -45,4 +45,22 @@ public interface MapStructMapper {
         return candidate != null ? candidate.getId() : null;
     }
 
+    default Vacancy mapVacancyIdToVacancy(Long vacancyId) {
+        Vacancy vacancy = new Vacancy();
+        vacancy.setId(vacancyId);
+        return vacancy;
+    }
+
+    default Resume mapResumeIdToResume(Long resumeId) {
+        Resume resume = new Resume();
+        resume.setId(resumeId);
+        return resume;
+    }
+
+    default Candidate mapCandidateIdToCandidate(Long candidateId) {
+        Candidate candidate = new Candidate();
+        candidate.setId(candidateId);
+        return candidate;
+    }
+
 }

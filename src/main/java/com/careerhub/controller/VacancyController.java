@@ -23,15 +23,6 @@ public class VacancyController {
         return ResponseEntity.ok(vacancyDTO);
     }
 
-    @PutMapping("/{vacancyId}/apply/{applicationId}")
-    public ResponseEntity<VacancyDTO> applyApplicationToVacancy(
-            @PathVariable("vacancyId") Long vacancyId,
-            @PathVariable("applicationId") Long applicationId
-    ) {
-        VacancyDTO vacancy = vacancyService.addApplicationToVacancy(vacancyId, applicationId);
-        return ResponseEntity.ok(vacancy);
-    }
-
     @GetMapping
     public ResponseEntity<Page<VacancyDTO>> getVacancies(
             @RequestParam(name = "sort", defaultValue = "created") String sort,

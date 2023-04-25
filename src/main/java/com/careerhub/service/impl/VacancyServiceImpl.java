@@ -5,10 +5,8 @@ import com.careerhub.dto.VacancyUpdateDTO;
 import com.careerhub.dto.VacancyDTO;
 import com.careerhub.dto.mapper.MapStructMapper;
 import com.careerhub.exception.ResourceNotFoundException;
-import com.careerhub.model.Application;
 import com.careerhub.model.Vacancy;
 import com.careerhub.repository.VacancyRepository;
-import com.careerhub.service.ApplicationService;
 import com.careerhub.service.VacancyService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -23,7 +21,6 @@ import java.util.List;
 public class VacancyServiceImpl implements VacancyService {
 
     private final VacancyRepository vacancyRepository;
-    private final ApplicationService applicationService;
     private final MapStructMapper mapper;
 
     private final List<String> SORT_FIELDS =
@@ -32,11 +29,9 @@ public class VacancyServiceImpl implements VacancyService {
 
     public VacancyServiceImpl(
             VacancyRepository vacancyRepository,
-            ApplicationService applicationService,
             MapStructMapper mapper
     ) {
         this.vacancyRepository = vacancyRepository;
-        this.applicationService = applicationService;
         this.mapper = mapper;
     }
 
@@ -62,7 +57,15 @@ public class VacancyServiceImpl implements VacancyService {
         return mapper.mapToVacancyDTO(vacancyResponse);
     }
 
-    private void refreshApplied(Vacancy vacancy) {
+    @Override
+    public Vacancy updateVacancy(Vacancy vacancy) {
+        Long vacancyId = vacancy.getId();
+        Vacancy existingVacancy = findVacancy(vacancyId);
+        existingVacancy = vacancyRepository.save(vacancy);
+        return existingVacancy;
+    }
+
+    public void refreshApplied(Vacancy vacancy) {
         int applied = 0;
         if (vacancy.getApplications() != null) {
             applied = vacancy.getApplications().size();
@@ -74,6 +77,7 @@ public class VacancyServiceImpl implements VacancyService {
     public void deleteVacancy(Long id) {
         Vacancy existingVacancy = findVacancy(id);
         existingVacancy.setDeleted(LocalDateTime.now());
+        vacancyRepository.save(existingVacancy);
     }
 
     @Override
@@ -89,20 +93,10 @@ public class VacancyServiceImpl implements VacancyService {
     }
 
     @Override
-    public VacancyDTO addApplicationToVacancy(Long vacancyId, Long applicationId) {
-        Vacancy vacancy = findVacancy(vacancyId);
-        Application application = applicationService.findApplication(applicationId);
-        vacancy.getApplications().add(application);
-        refreshApplied(vacancy);
-        Vacancy vacancyResponse = vacancyRepository.save(vacancy);
-        return mapper.mapToVacancyDTO(vacancyResponse);
-    }
-
-    @Override
     public Page<VacancyDTO> getVacancies(String sort, String order, int page, int size) {
         validateSearchRequest(null, sort, order, page, size);
         PageRequest pageRequest = createPageRequestBy(sort, order, page, size);
-        return vacancyRepository.findAllAndDeletedIsNull(pageRequest)
+        return vacancyRepository.findByDeletedIsNull(pageRequest)
                 .map(mapper::mapToVacancyDTO);
     }
 

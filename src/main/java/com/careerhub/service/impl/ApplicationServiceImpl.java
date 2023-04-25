@@ -3,6 +3,7 @@ package com.careerhub.service.impl;
 import com.careerhub.dto.ApplicationCreateDTO;
 import com.careerhub.dto.ApplicationDTO;
 import com.careerhub.dto.ApplicationUpdateDTO;
+import com.careerhub.dto.VacancyDTO;
 import com.careerhub.dto.mapper.MapStructMapper;
 import com.careerhub.exception.ResourceNotFoundException;
 import com.careerhub.model.*;
@@ -107,6 +108,16 @@ public class ApplicationServiceImpl implements ApplicationService {
             throw new ResourceNotFoundException("Application not found by provided id: " + id);
 
         return existingApplication;
+    }
+
+    @Override
+    public VacancyDTO addApplicationToVacancy(Long applicationId, Long vacancyId) {
+        Application application = findApplication(applicationId);
+        Vacancy vacancy = vacancyService.findVacancy(vacancyId);
+        vacancy.getApplications().add(application);
+        vacancyService.refreshApplied(vacancy);
+        Vacancy vacancyResponse = vacancyService.updateVacancy(vacancy);
+        return mapper.mapToVacancyDTO(vacancyResponse);
     }
 
     @Override
