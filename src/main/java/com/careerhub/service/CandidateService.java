@@ -8,15 +8,15 @@ import org.springframework.data.domain.Page;
 
 public interface CandidateService {
 
-    CandidateDTO getCandidateById(Long id);
-
     CandidateDTO createCandidate(CandidateCreateDTO candidateCreateDTO);
 
-    void deleteCandidate(Long id);
+    void deleteCandidate(Long candidateId);
 
-    CandidateDTO updateCandidate(Long id, CandidateUpdateDTO candidateUpdateDTO);
+    CandidateDTO updateCandidate(Long candidateId, CandidateUpdateDTO candidateUpdateDTO);
 
     Candidate findCandidate(Long candidateId);
 
-    Page<CandidateDTO> getCandidateDTOPage(Long vacancyId);
+    Page<CandidateDTO> getCandidateDTOPage(Long vacancyId, String sort, String order, int page, int size);
+
+    CandidateDTO getCandidateDTO(Long candidateId);
 }

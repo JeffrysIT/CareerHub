@@ -3,10 +3,14 @@ package com.careerhub.controller;
 import com.careerhub.dto.*;
 import com.careerhub.service.ApplicationService;
 import com.careerhub.service.CandidateService;
+import com.careerhub.service.ResumeService;
 import com.careerhub.service.VacancyService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,6 +29,9 @@ public class VacancyController {
     @Autowired
     private CandidateService candidateService;
 
+    @Autowired
+    private ResumeService resumeService;
+
     @GetMapping
     public ResponseEntity<Page<VacancyDTO>> getVacancies(
             @RequestParam(name = "sort", defaultValue = "created") String sort,
@@ -38,7 +45,22 @@ public class VacancyController {
 
     @GetMapping("/{vacancyId}")
     public ResponseEntity<VacancyDTO> getVacancyById(@PathVariable("vacancyId") Long vacancyId) {
-        VacancyDTO vacancyDTO = vacancyService.getVacancyDTOById(vacancyId);
+        VacancyDTO vacancyDTO = vacancyService.getVacancyDTO(vacancyId);
+        return ResponseEntity.ok(vacancyDTO);
+    }
+
+    @PostMapping
+    public ResponseEntity<VacancyDTO> createVacancy(@RequestBody VacancyCreateDTO vacancyCreateDTO) {
+        VacancyDTO vacancyDTO = vacancyService.createVacancy(vacancyCreateDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(vacancyDTO);
+    }
+
+    @PutMapping("/{vacancyId}")
+    public ResponseEntity<VacancyDTO> updateVacancy(
+            @PathVariable("vacancyId") Long vacancyId,
+            @RequestBody VacancyUpdateDTO vacancyUpdateDTO
+    ) {
+        VacancyDTO vacancyDTO = vacancyService.updateVacancy(vacancyId, vacancyUpdateDTO);
         return ResponseEntity.ok(vacancyDTO);
     }
 
@@ -55,24 +77,33 @@ public class VacancyController {
     }
 
     @DeleteMapping("/{vacancyId}")
-    public ResponseEntity<Void> deleteVacancy(
-            @PathVariable("vacancyId") Long vacancyId
-    ) {
+    public ResponseEntity<Void> deleteVacancy(@PathVariable("vacancyId") Long vacancyId) {
         vacancyService.deleteVacancy(vacancyId);
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping("/{vacancyId}/candidates")
+    public ResponseEntity<Page<CandidateDTO>> getVacancyCandidates(
+            @PathVariable("vacancyID") Long vacancyId,
+            @RequestParam(name = "sort", defaultValue = "created") String sort,
+            @RequestParam(name = "order", defaultValue = "DESC") String order,
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size) {
+        Page<CandidateDTO> candidateDTOPage = candidateService.getCandidateDTOPage(vacancyId, sort, order, page, size);
+        return ResponseEntity.ok(candidateDTOPage);
+    }
+
     @GetMapping("/{vacancyId}/applications")
-    ResponseEntity<Page<ApplicationDTO>> getApplications(
+    public ResponseEntity<Page<ApplicationDTO>> getApplications(
             @PathVariable("vacancyId") Long vacancyId,
-            @RequestParam(name = "statusPresent", defaultValue = "CONSIDERING") String statusPresent,
+            @RequestParam(name = "status", defaultValue = "CONSIDERING") String status,
             @RequestParam(name = "sort", defaultValue = "created") String sort,
             @RequestParam(name = "order", defaultValue = "DESC") String order,
             @RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "10") int size
     ) {
         Page<ApplicationDTO> applicationDTOPage =
-                applicationService.getApplicationDTOPage(vacancyId, statusPresent, sort, order, page, size);
+                applicationService.getApplicationDTOPage(vacancyId, status, sort, order, page, size);
         return ResponseEntity.ok(applicationDTOPage);
     }
 
@@ -80,22 +111,10 @@ public class VacancyController {
     public ResponseEntity<ApplicationDTO> createApplication(
             @PathVariable("vacancyId") Long vacancyId,
             @PathVariable("candidateId") Long candidateId,
-            @RequestBody ApplicationCreateDTO applicationCreateDTO
-    ) {
+            @RequestBody ApplicationCreateDTO applicationCreateDTO,
+            @RequestParam(value = "file", required = false) MultipartFile file) {
         ApplicationDTO applicationDTO =
-                applicationService.createApplication(vacancyId, candidateId, applicationCreateDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(applicationDTO);
-    }
-
-    @PostMapping("/{vacancyId}/candidates/{candidateId}/applications/upload")
-    public ResponseEntity<ApplicationDTO> createApplicationWithResume(
-            @PathVariable("vacancyId") Long vacancyId,
-            @PathVariable("candidateId") Long candidateId,
-            @RequestParam("file") MultipartFile file,
-            @RequestBody ApplicationCreateDTO applicationCreateDTO
-    ) {
-        ApplicationDTO applicationDTO =
-                applicationService.createApplication(vacancyId, candidateId, file, applicationCreateDTO);
+                applicationService.createApplication(vacancyId, candidateId, applicationCreateDTO, file);
         return ResponseEntity.status(HttpStatus.CREATED).body(applicationDTO);
     }
 
@@ -104,30 +123,12 @@ public class VacancyController {
             @PathVariable("vacancyId") Long vacancyId,
             @PathVariable("candidateId") Long candidateId,
             @PathVariable("applicationId") Long applicationId,
-            @RequestBody ApplicationUpdateDTO applicationUpdateDTO
+            @RequestBody ApplicationUpdateDTO applicationUpdateDTO,
+            @RequestParam(value = "file", required = false) MultipartFile file
     ) {
         ApplicationDTO applicationDTO =
-                applicationService.updateApplication(vacancyId, candidateId, applicationId, applicationUpdateDTO);
+                applicationService.updateApplication(vacancyId, candidateId, applicationId, applicationUpdateDTO, file);
         return ResponseEntity.ok(applicationDTO);
-    }
-
-    @PutMapping("/{vacancyId}/candidates/{candidateId}/applications/{applicationId}/upload")
-    public ResponseEntity<ApplicationDTO> updateApplicationWithResume(
-            @PathVariable("vacancyId") Long vacancyId,
-            @PathVariable("candidateId") Long candidateId,
-            @PathVariable("applicationId") Long applicationId,
-            @RequestParam("file") MultipartFile file,
-            @RequestBody ApplicationUpdateDTO applicationUpdateDTO
-    ) {
-        ApplicationDTO applicationDTO =
-                applicationService.updateApplication(vacancyId, candidateId, applicationId, file, applicationUpdateDTO);
-        return ResponseEntity.ok(applicationDTO);
-    }
-
-    @GetMapping("/{vacancyId}/candidates")
-    public ResponseEntity<Page<CandidateDTO>> getCandidates(@PathVariable("vacancyID") Long vacancyId) {
-        Page<CandidateDTO> candidateDTOPage = candidateService.getCandidateDTOPage(vacancyId);
-        return ResponseEntity.ok(candidateDTOPage);
     }
 
     @GetMapping("/{vacancyId}/candidates/{candidateId}/applications/{applicationId}")
@@ -140,18 +141,8 @@ public class VacancyController {
         return ResponseEntity.ok(applicationDTO);
     }
 
-    @PutMapping("/{vacancyId}/candidates/{candidateId}/applications/{applicationId}")
-    public ResponseEntity<VacancyDTO> addApplicationToVacancy(
-            @PathVariable("vacancyId") Long vacancyId,
-            @PathVariable("candidateId") Long candidateId,
-            @PathVariable("applicationId") Long applicationId
-    ) {
-        VacancyDTO vacancyDTO = applicationService.addApplicationToVacancy(vacancyId, candidateId, applicationId);
-        return ResponseEntity.ok(vacancyDTO);
-    }
-
     @DeleteMapping("/{vacancyId}/candidates/{candidateId}/applications/{applicationId}")
-    public ResponseEntity<Void> removeApplicationFromVacancy(
+    public ResponseEntity<Void> deleteApplicationFromVacancy(
             @PathVariable("vacancyId") Long vacancyId,
             @PathVariable("candidateId") Long candidateId,
             @PathVariable("applicationId") Long applicationId
@@ -165,9 +156,21 @@ public class VacancyController {
             @PathVariable("vacancyId") Long vacancyId,
             @PathVariable("candidateId") Long candidateId,
             @PathVariable("applicationId") Long applicationId,
-            @RequestBody String status) {
+            @RequestBody String status
+    ) {
         applicationService.changeStatus(vacancyId, candidateId, applicationId, status);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/{vacancyId}/candidates/{candidateId}/applications/{applicationId}/resumes/{resumeId}/download")
+    public ResponseEntity<Resource> downloadResume(@PathVariable Long vacancyId, @PathVariable Long candidateId,
+                                                   @PathVariable Long applicationId, @PathVariable Long resumeId
+    ) {
+        Resource resumeResource = resumeService.download(vacancyId, candidateId, applicationId, resumeId);
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resumeResource.getFilename() + "\"")
+                .body(resumeResource);
     }
 
 }

@@ -6,7 +6,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class CandidateDTO {
-
     @JsonProperty("id")
     private Long id;
 

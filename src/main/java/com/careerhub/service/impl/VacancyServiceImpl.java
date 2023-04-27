@@ -5,11 +5,14 @@ import com.careerhub.dto.VacancyUpdateDTO;
 import com.careerhub.dto.VacancyDTO;
 import com.careerhub.dto.mapper.MapStructMapper;
 import com.careerhub.exception.ResourceNotFoundException;
+import com.careerhub.model.Candidate;
 import com.careerhub.model.Vacancy;
 import com.careerhub.repository.VacancyRepository;
+import com.careerhub.service.CandidateService;
 import com.careerhub.service.VacancyService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +23,7 @@ import java.util.List;
 @Service
 public class VacancyServiceImpl implements VacancyService {
 
+    private final CandidateService candidateService;
     private final VacancyRepository vacancyRepository;
     private final MapStructMapper mapper;
 
@@ -28,9 +32,10 @@ public class VacancyServiceImpl implements VacancyService {
     public final static int MAX_QUERY_LEN = 1000;
 
     public VacancyServiceImpl(
-            VacancyRepository vacancyRepository,
+            CandidateService candidateService, VacancyRepository vacancyRepository,
             MapStructMapper mapper
     ) {
+        this.candidateService = candidateService;
         this.vacancyRepository = vacancyRepository;
         this.mapper = mapper;
     }
@@ -39,13 +44,13 @@ public class VacancyServiceImpl implements VacancyService {
     public VacancyDTO createVacancy(VacancyCreateDTO vacancyDto) {
         Vacancy vacancy = mapper.mapToVacancyEntity(vacancyDto);
         vacancy.setCreated(LocalDateTime.now());
-        Vacancy vacancyResult = vacancyRepository.save(vacancy);
-        return mapper.mapToVacancyDTO(vacancyResult);
+        vacancy = vacancyRepository.save(vacancy);
+        return mapper.mapToVacancyDTO(vacancy);
     }
 
     @Override
-    public VacancyDTO updateVacancy(Long id, VacancyUpdateDTO vacancyUpdateDTO) {
-        Vacancy existingVacancy = findVacancy(id);
+    public VacancyDTO updateVacancy(Long vacancyId, VacancyUpdateDTO vacancyUpdateDTO) {
+        Vacancy existingVacancy = findVacancy(vacancyId);
 
         existingVacancy.setTitle(vacancyUpdateDTO.getTitle());
         existingVacancy.setDescription(vacancyUpdateDTO.getDescription());
@@ -58,22 +63,6 @@ public class VacancyServiceImpl implements VacancyService {
     }
 
     @Override
-    public Vacancy updateVacancy(Vacancy vacancy) {
-        Long vacancyId = vacancy.getId();
-        Vacancy existingVacancy = findVacancy(vacancyId);
-        existingVacancy = vacancyRepository.save(vacancy);
-        return existingVacancy;
-    }
-
-    public void refreshApplied(Vacancy vacancy) {
-        int applied = 0;
-        if (vacancy.getApplications() != null) {
-            applied = vacancy.getApplications().size();
-        }
-        vacancy.setApplied(applied);
-    }
-
-    @Override
     public void deleteVacancy(Long id) {
         Vacancy existingVacancy = findVacancy(id);
         existingVacancy.setDeleted(LocalDateTime.now());
@@ -81,7 +70,7 @@ public class VacancyServiceImpl implements VacancyService {
     }
 
     @Override
-    public VacancyDTO getVacancyDTOById(Long id) {
+    public VacancyDTO getVacancyDTO(Long id) {
         Vacancy existingVacancy = findVacancy(id);
         increaseView(existingVacancy);
         return mapper.mapToVacancyDTO(existingVacancy);
@@ -93,17 +82,24 @@ public class VacancyServiceImpl implements VacancyService {
     }
 
     @Override
+    public Page<VacancyDTO> getVacanciesDTO(Long candidateId, String sort, String order, int page, int size) {
+        Candidate candidate = candidateService.findCandidate(candidateId);
+        Pageable pageRequest = createPageRequest(null, sort, order, page, size);
+        return vacancyRepository.findAllByCandidateAndDeletedIsNull(candidate, pageRequest)
+                .map(mapper::mapToVacancyDTO);
+    }
+
+    @Override
     public Page<VacancyDTO> getVacanciesDTO(String sort, String order, int page, int size) {
         validateSearchRequest(null, sort, order, page, size);
-        PageRequest pageRequest = createPageRequestBy(sort, order, page, size);
+        PageRequest pageRequest = createPageRequest(null, sort, order, page, size);
         return vacancyRepository.findByDeletedIsNull(pageRequest)
                 .map(mapper::mapToVacancyDTO);
     }
 
     @Override
     public Page<VacancyDTO> searchVacancies(String query, String sort, String order, int page, int size) {
-        validateSearchRequest(query, sort, order, page, size);
-        PageRequest pageRequest = createPageRequestBy(sort, order, page, size);
+        PageRequest pageRequest = createPageRequest(query, sort, order, page, size);
         return vacancyRepository.searchByTitleContainingIgnoreCaseAndDeletedIsNull(query, pageRequest)
                 .map(mapper::mapToVacancyDTO);
     }
@@ -129,22 +125,18 @@ public class VacancyServiceImpl implements VacancyService {
     @Override
     public Vacancy findVacancy(Long vacancyId) {
         if (vacancyId == null || vacancyId < 0)
-            throw new IllegalArgumentException("vacancyId can't be null or less than 0");
+            throw new IllegalArgumentException("Invalid parameter vacancyId");
         return vacancyRepository.findByIdAndDeletedIsNull(vacancyId).orElseThrow(
-                () -> new ResourceNotFoundException("Vacancy not found by id: " + vacancyId));
+                () -> new ResourceNotFoundException("Vacancy not found"));
     }
 
-    @Override
-    public boolean isExist(Long vacancyId) {
-        if (vacancyId == null || vacancyId < 0)
-            throw new IllegalArgumentException("vacancy id can't be null or less than 0");
-        return vacancyRepository.existsById(vacancyId);
-    }
-
-    private PageRequest createPageRequestBy(String sortBy, String order, int page, int size) {
-        Sort.Direction orderBy = order.equalsIgnoreCase("ASC") ? Sort.Direction.ASC : Sort.Direction.DESC;
-        Sort sort = Sort.by(orderBy, sortBy);
-        return PageRequest.of(page, size, sort);
+    private PageRequest createPageRequest(String query, String sort, String order, int page, int size) {
+        validateSearchRequest(query, sort, order, page, size);
+        Sort.Direction sortDirection = order.equalsIgnoreCase(Sort.Direction.ASC.name())
+                ? Sort.Direction.ASC
+                : Sort.Direction.DESC;
+        Sort sortBy = Sort.by(sortDirection, sort);
+        return PageRequest.of(page, size, sortBy);
     }
 
 }

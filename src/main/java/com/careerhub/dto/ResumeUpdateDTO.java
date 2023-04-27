@@ -3,7 +3,6 @@ package com.careerhub.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ResumeUpdateDTO {
-
     @JsonProperty(value = "file_name", required = true)
     private String fileName;
 

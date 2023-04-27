@@ -17,7 +17,8 @@ Built on industry-best practices and with a modern tech stack, this microservice
 * This project is built using Maven.
 
 
-## API Description:
+# API Description:
+## Vacancies API:
 ### Get vacancies:
 * Method: GET
 * Endpoint: ```/api/v1/vacancies```
@@ -57,6 +58,62 @@ Built on industry-best practices and with a modern tech stack, this microservice
 ### Change application status:
 * Method: PATCH
 * Endpoint: ```/{vacancyId}/candidates/{candidateId}/applications/{applicationId}```
+
+## Candidate API:
+
+### Create Candidate
+* Method: POST
+* Endpoint: ```/api/v1/candidates```
+* Required Body: CandidateCreateDTO
+###  Get Candidate
+* Method: GET
+* Endpoint: ```/api/v1/candidates/{candidateId}```
+
+### Delete Candidate
+* Method: DELETE
+* Endpoint: ```/api/v1/candidates/{candidateId}```
+
+### Update Candidate
+* Method: PUT
+* Endpoint: ```/api/v1/candidates/{candidateId}```
+
+* Required Body: CandidateUpdateDTO
+### Get Candidate Applications
+* Method: GET
+* Endpoint: ```/api/v1/candidates/{candidateId}/applications```
+
+### Get Candidate Application
+* Method: GET
+* Endpoint: ```/api/v1/candidates/{candidateId}/applications/{applicationId}```
+
+### Update Candidate Application
+* Method: PUT
+* Endpoint: ```/api/v1/candidates/{candidateId}/applications/{applicationId}```
+
+### Delete Candidate Application
+* Method: DELETE
+* Endpoint: ```/api/v1/candidates/{candidateId}/applications/{applicationId}```
+
+### Get Candidate Vacancies
+* Method: GET
+* Endpoint: ```/api/v1/candidates/{candidateId}/vacancies```
+
+### Get Candidate Resumes
+* Method: GET
+* Endpoint: ```/api/v1/candidates/{candidateId}/resumes```
+
+### Upload Candidate Resume
+* Method: POST
+* Endpoint: ```/api/v1/candidates/{candidateId}/resumes```
+
+* Required Body: MultipartFile
+### Delete Candidate Resume
+* Method: DELETE
+* Endpoint: ```/api/v1/candidates/{candidateId}/resumes/{resumeId}```
+
+### Download Candidate Resume
+* Method: GET
+* Endpoint: ```/api/v1/candidates/{candidateId}/resumes/{resumeId}/download```
 ### Note: The API endpoints are based on version 1 of the API and the base URL is not specified. The base URL should be added to each endpoint in order to make valid API requests.
 
 ## License

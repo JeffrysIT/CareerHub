@@ -3,7 +3,6 @@ package com.careerhub.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class VacancyUpdateDTO {
-
     @JsonProperty("title")
     private String title;
 

@@ -17,6 +17,7 @@ public class Resume extends TimestampedEntity {
     @Column(name = "file_name", nullable = false)
     private String fileName;
 
+    @Lob
     @Column(name = "file_data", nullable = false)
     private byte[] fileData;
 

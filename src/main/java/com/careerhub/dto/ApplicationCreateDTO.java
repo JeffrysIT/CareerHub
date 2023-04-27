@@ -3,7 +3,6 @@ package com.careerhub.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ApplicationCreateDTO {
-
     @JsonProperty("cover_letter")
     private String coverLetter;
 
