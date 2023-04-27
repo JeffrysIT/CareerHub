@@ -8,8 +8,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @SpringBootApplication
 @EnableJpaRepositories(basePackages = "com.careerhub.repository")
 @EntityScan(basePackages = "com.careerhub.model")
-public class Application {
+public class CareerHub {
     public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
+        SpringApplication.run(CareerHub.class, args);
     }
 }

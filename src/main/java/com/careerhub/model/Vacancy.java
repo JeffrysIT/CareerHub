@@ -3,13 +3,12 @@ package com.careerhub.model;
 
 import jakarta.persistence.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
 @Entity
 @Table(name = "vacancies")
-public class Vacancy {
+public class Vacancy extends TimestampedEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -32,20 +31,8 @@ public class Vacancy {
     @Column(name = "applied")
     private int applied;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "created", nullable = false)
-    private LocalDateTime created;
-
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "deleted")
-    private LocalDateTime deleted;
-
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "updated")
-    private LocalDateTime updated;
-
-    @ManyToMany(mappedBy = "appliedVacancies")
-    private List<UserDetails> applicants;
+    @OneToMany(mappedBy = "vacancy")
+    private List<Application> applications;
 
     public Vacancy() {
     }
@@ -60,38 +47,21 @@ public class Vacancy {
                 ", location='" + location + '\'' +
                 ", viewed=" + viewed +
                 ", applied=" + applied +
-                ", created=" + created +
-                ", deleted=" + deleted +
-                ", updated=" + updated +
-                ", applicants=" + applicants.toString() +
-                '}';
+                ", applications=" + applications +
+                "} " + super.toString();
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Vacancy vacancy = (Vacancy) o;
-        return getId() == vacancy.getId() &&
-                getViewed() == vacancy.getViewed() &&
-                getApplied() == vacancy.getApplied() &&
-                getTitle().equals(vacancy.getTitle()) &&
-                Objects.equals(getDescription(), vacancy.getDescription()) &&
-                Objects.equals(getSalary(), vacancy.getSalary()) &&
-                Objects.equals(getLocation(), vacancy.getLocation()) &&
-                getCreated().equals(vacancy.getCreated()) &&
-                Objects.equals(getDeleted(), vacancy.getDeleted()) &&
-                Objects.equals(getUpdated(), vacancy.getUpdated()) &&
-                Objects.equals(getApplicants(), vacancy.getApplicants());
+        Vacancy vacancy1 = (Vacancy) o;
+        return getId() == vacancy1.getId() && getViewed() == vacancy1.getViewed() && getApplied() == vacancy1.getApplied() && getTitle().equals(vacancy1.getTitle()) && Objects.equals(getDescription(), vacancy1.getDescription()) && Objects.equals(getSalary(), vacancy1.getSalary()) && Objects.equals(getLocation(), vacancy1.getLocation()) && Objects.equals(getApplications(), vacancy1.getApplications());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(
-                getId(), getTitle(), getDescription(), getSalary(), getLocation(),
-                getViewed(), getApplied(), getCreated(), getDeleted(), getUpdated(),
-                getApplicants()
-        );
+        return Objects.hash(getId(), getTitle(), getDescription(), getSalary(), getLocation(), getViewed(), getApplied(), getApplications());
     }
 
     public long getId() {
@@ -150,35 +120,11 @@ public class Vacancy {
         this.applied = applied;
     }
 
-    public LocalDateTime getCreated() {
-        return created;
+    public List<Application> getApplications() {
+        return applications;
     }
 
-    public void setCreated(LocalDateTime created) {
-        this.created = created;
-    }
-
-    public LocalDateTime getDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(LocalDateTime deleted) {
-        this.deleted = deleted;
-    }
-
-    public LocalDateTime getUpdated() {
-        return updated;
-    }
-
-    public void setUpdated(LocalDateTime updated) {
-        this.updated = updated;
-    }
-
-    public List<UserDetails> getApplicants() {
-        return applicants;
-    }
-
-    public void setApplicants(List<UserDetails> applicants) {
-        this.applicants = applicants;
+    public void setApplications(List<Application> applications) {
+        this.applications = applications;
     }
 }
