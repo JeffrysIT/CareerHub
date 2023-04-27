@@ -4,7 +4,6 @@ package com.careerhub.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ApplicationUpdateDTO {
-
     @JsonProperty(value = "cover_letter", required = true)
     private String coverLetter;
 

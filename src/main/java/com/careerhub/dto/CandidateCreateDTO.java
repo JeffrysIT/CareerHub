@@ -2,9 +2,7 @@ package com.careerhub.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-
 public class CandidateCreateDTO {
-
     @JsonProperty("first_name")
     private String firstName;
 

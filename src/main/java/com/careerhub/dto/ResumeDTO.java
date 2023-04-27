@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.LocalDateTime;
 
 public class ResumeDTO {
-
     @JsonProperty("id")
     private long id;
 
