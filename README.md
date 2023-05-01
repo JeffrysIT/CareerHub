@@ -37,15 +37,9 @@ Built on industry-best practices and with a modern tech stack, this microservice
 ### Create application for a candidate and vacancy:
 * Method: POST
 * Endpoint: ```/api/v1/vacancies/{vacancyId}/candidates/{candidateId}/applications```
-### Create application with resume for a candidate and vacancy:
-* Method: POST
-* Endpoint: ```/api/v1/vacancies/{vacancyId}/candidates/{candidateId}/applications/upload```
-### Update application for a candidate and vacancy:
+### Create application for a candidate and vacancy:
 * Method: PUT
 * Endpoint: ```/api/v1/vacancies/{vacancyId}/candidates/{candidateId}/applications/{applicationId}```
-### Update application with resume for a candidate and vacancy:
-* Method: PUT
-* Endpoint: ```/api/v1/vacancies/{vacancyId}/candidates/{candidateId}/applications/{applicationId}/upload```
 ### Get candidates from a vacancy:
 * Method: GET
 * Endpoint: ```/api/v1/vacancies/{vacancyId}/candidates```
@@ -54,10 +48,10 @@ Built on industry-best practices and with a modern tech stack, this microservice
 * Endpoint: ```/api/v1/vacancies/{vacancyId}/candidates/{candidateId}/applications/{applicationId}```
 ### Delete application from Vacancy:
 * Method: DELETE
-* Endpoint: ```/{vacancyId}/candidates/{candidateId}/applications/{applicationId}```
+* Endpoint: ```/api/v1/{vacancyId}/candidates/{candidateId}/applications/{applicationId}```
 ### Change application status:
 * Method: PATCH
-* Endpoint: ```/{vacancyId}/candidates/{candidateId}/applications/{applicationId}```
+* Endpoint: ```/api/v1/{vacancyId}/candidates/{candidateId}/applications/{applicationId}```
 
 ## Candidate API:
 
