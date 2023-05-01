@@ -13,5 +13,5 @@ import java.util.Optional;
 public interface CandidateRepository extends CrudRepository<Candidate, Long> {
     Candidate findByIdAndDeletedIsNull(Long id);
 
-    Page<Candidate> findAllByVacancyAndDeletedIsNull(Vacancy vacancy, Pageable pageRequest);
+    Page<Candidate> findAllByApplicationsVacancyAndDeletedIsNull(Vacancy vacancy, Pageable pageRequest);
 }

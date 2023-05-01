@@ -85,7 +85,7 @@ public class VacancyServiceImpl implements VacancyService {
     public Page<VacancyDTO> getVacanciesDTO(Long candidateId, String sort, String order, int page, int size) {
         Candidate candidate = candidateService.findCandidate(candidateId);
         Pageable pageRequest = createPageRequest(null, sort, order, page, size);
-        return vacancyRepository.findAllByCandidateAndDeletedIsNull(candidate, pageRequest)
+        return vacancyRepository.findAllByApplicationsCandidateAndDeletedIsNull(candidate, pageRequest)
                 .map(mapper::mapToVacancyDTO);
     }
 
