@@ -119,7 +119,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             throw new IllegalArgumentException("Invalid parameter applicationId");
 
         Application existingApplication = applicationRepository
-                .findByVacancyIdAndCandidateIdAndApplicationIdAndDeletedIsNull(vacancyId, candidateId, applicationId);
+                .findByVacancyIdAndCandidateIdAndIdAndDeletedIsNull(vacancyId, candidateId, applicationId);
         if (existingApplication == null)
             throw new ResourceNotFoundException("Application not found");
 
@@ -161,7 +161,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             throw new IllegalArgumentException("Invalid parameter applicationId");
 
         Application existingApplication = applicationRepository
-                .findByCandidateIdAndApplicationIdAndDeletedIsNull(candidateId, applicationId);
+                .findByCandidateIdAndIdAndDeletedIsNull(candidateId, applicationId);
         if (existingApplication == null)
             throw new ResourceNotFoundException("Application not found");
 

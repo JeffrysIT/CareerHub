@@ -10,6 +10,7 @@ import com.careerhub.model.Vacancy;
 import com.careerhub.repository.CandidateRepository;
 import com.careerhub.service.CandidateService;
 import com.careerhub.service.VacancyService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -22,7 +23,7 @@ import java.util.List;
 @Service
 public class CandidateServiceImpl implements CandidateService {
 
-    private final VacancyService vacancyService;
+    private VacancyService vacancyService;
     private final CandidateRepository candidateRepository;
     private final MapStructMapper mapper;
 
@@ -31,12 +32,14 @@ public class CandidateServiceImpl implements CandidateService {
     );
 
     public CandidateServiceImpl(
-            VacancyService vacancyService,
             CandidateRepository candidateRepository,
             MapStructMapper mapper) {
-        this.vacancyService = vacancyService;
         this.candidateRepository = candidateRepository;
         this.mapper = mapper;
+    }
+
+    public void setVacancyService(VacancyService vacancyService) {
+        this.vacancyService = vacancyService;
     }
 
     @Override

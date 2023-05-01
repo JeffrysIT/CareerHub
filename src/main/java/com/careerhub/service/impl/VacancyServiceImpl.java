@@ -23,7 +23,7 @@ import java.util.List;
 @Service
 public class VacancyServiceImpl implements VacancyService {
 
-    private final CandidateService candidateService;
+    private CandidateService candidateService;
     private final VacancyRepository vacancyRepository;
     private final MapStructMapper mapper;
 
@@ -32,12 +32,15 @@ public class VacancyServiceImpl implements VacancyService {
     public final static int MAX_QUERY_LEN = 1000;
 
     public VacancyServiceImpl(
-            CandidateService candidateService, VacancyRepository vacancyRepository,
+            VacancyRepository vacancyRepository,
             MapStructMapper mapper
     ) {
-        this.candidateService = candidateService;
         this.vacancyRepository = vacancyRepository;
         this.mapper = mapper;
+    }
+
+    public void setCandidateService(CandidateService candidateService) {
+        this.candidateService = candidateService;
     }
 
     @Override
