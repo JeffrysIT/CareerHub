@@ -19,5 +19,5 @@ public interface VacancyRepository extends CrudRepository<Vacancy, Long> {
 
     Page<Vacancy> searchByTitleContainingIgnoreCaseAndDeletedIsNull(String query, PageRequest pageRequest);
 
-    Page<Vacancy> findAllByCandidateAndDeletedIsNull(Candidate candidate, Pageable pageRequest);
+    Page<Vacancy> findAllByApplicationsCandidateAndDeletedIsNull(Candidate candidate, Pageable pageRequest);
 }

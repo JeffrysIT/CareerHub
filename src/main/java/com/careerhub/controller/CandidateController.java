@@ -115,7 +115,7 @@ public class CandidateController {
         return ResponseEntity.ok(vacancyDTOPage);
     }
 
-    @GetMapping("/{candidateId}/resumes}")
+    @GetMapping("/{candidateId}/resumes")
     public ResponseEntity<List<ResumeDTO>> getCandidateResumes(
             @PathVariable("candidateId") Long candidateId,
             @RequestParam(name = "sort", defaultValue = "created") String sort,
